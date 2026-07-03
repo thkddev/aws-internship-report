@@ -1,115 +1,72 @@
 ---
 title: "Proposal"
-date: 2024-01-01
+date: 2026-07-03
 weight: 2
 chapter: false
 pre: " <b> 2. </b> "
 ---
-{{% notice warning %}}
-⚠️ **Note:** The information below is for reference purposes only. Please **do not copy verbatim** for your report, including this warning.
-{{% /notice %}}
 
-In this section, you need to summarize the contents of the workshop that you **plan** to conduct.
+# Internal Document Management System (DMS) using AWS Serverless
 
-# IoT Weather Platform for Lab Research
-## A Unified AWS Serverless Solution for Real-Time Weather Monitoring
+### 1. Executive Summary  
+The **Document Management System (DMS)** project is designed to build a secure and automated system for storing, authorizing, and managing the lifecycle of internal documents. By fully leveraging the **AWS Serverless** ecosystem (Cognito, API Gateway, Lambda, S3, DynamoDB, SQS), the system optimizes operational costs (pay-as-you-go) while ensuring enterprise-level scalability and security.
 
-### 1. Executive Summary
-The IoT Weather Platform is designed for the ITea Lab team in Ho Chi Minh City to enhance weather data collection and analysis. It supports up to 5 weather stations, with potential scalability to 10-15, utilizing Raspberry Pi edge devices with ESP32 sensors to transmit data via MQTT. The platform leverages AWS Serverless services to deliver real-time monitoring, predictive analytics, and cost efficiency, with access restricted to 5 lab members via Amazon Cognito.
+### 2. Problem Statement  
+**Current Issues:**  
+Storing and sharing internal documents via traditional platforms presents multiple challenges: difficulty in tracing version history, lack of granular access control mechanisms, high risk of sensitive data leakage, and the significant cost of maintaining physical servers 24/7 despite irregular usage patterns.
 
-### 2. Problem Statement
-### What’s the Problem?
-Current weather stations require manual data collection, becoming unmanageable with multiple units. There is no centralized system for real-time data or analytics, and third-party platforms are costly and overly complex.
+**Proposed Solution:**  
+Build a 100% Serverless architecture. Specifically:
+- Use **Amazon S3** as the document storage space with versioning and encryption enabled.
+- Use **DynamoDB** to store metadata (creator, timestamp, edit history) with millisecond latency.
+- Handle file upload processes asynchronously using **Amazon SQS** to avoid bottlenecks during high concurrent user interactions.
+- Implement identity and access management via **Amazon Cognito**.
 
-### The Solution
-The platform uses AWS IoT Core to ingest MQTT data, AWS Lambda and API Gateway for processing, Amazon S3 for storage (including a data lake), and AWS Glue Crawlers and ETL jobs to extract, transform, and load data from the S3 data lake to another S3 bucket for analysis. AWS Amplify with Next.js provides the web interface, and Amazon Cognito ensures secure access. Similar to Thingsboard and CoreIoT, users can register new devices and manage connections, though this platform operates on a smaller scale and is designed for private use. Key features include real-time dashboards, trend analysis, and low operational costs.
+**Return on Investment (ROI):**  
+The system requires zero fixed costs for server management and automatically scales with traffic. The estimated maintenance cost during the development phase is less than $2/month thanks to the AWS Free Tier.
 
-### Benefits and Return on Investment
-The solution establishes a foundational resource for lab members to develop a larger IoT platform, serving as a study resource, and provides a data foundation for AI enthusiasts for model training or analysis. It reduces manual reporting for each station via a centralized platform, simplifying management and maintenance, and improves data reliability. Monthly costs are $0.66 USD per the AWS Pricing Calculator, with a 12-month total of $7.92 USD. All IoT equipment costs are covered by the existing weather station setup, eliminating additional development expenses. The break-even period of 6-12 months is achieved through significant time savings from reduced manual work.
+### 3. Solution Architecture  
 
-### 3. Solution Architecture
-The platform employs a serverless AWS architecture to manage data from 5 Raspberry Pi-based stations, scalable to 15. Data is ingested via AWS IoT Core, stored in an S3 data lake, and processed by AWS Glue Crawlers and ETL jobs to transform and load it into another S3 bucket for analysis. Lambda and API Gateway handle additional processing, while Amplify with Next.js hosts the dashboard, secured by Cognito. The architecture is detailed below:
+The system utilizes the following core services to build a highly secure and performant data flow:
 
-![IoT Weather Station Architecture](/images/2-Proposal/edge_architecture.jpeg)
+**AWS Services Used:**  
+- **Amazon Cognito**: User authentication and JWT Token issuance.  
+- **Amazon API Gateway**: The single entry point (REST API) for the frontend, directly integrated with Cognito Authorizer.  
+- **AWS Lambda**: Business logic processing (Document CRUD, access authorization).  
+- **Amazon S3**: Secure storage for physical document files (Private S3 Bucket).  
+- **Amazon DynamoDB**: NoSQL database for storing document metadata.  
+- **Amazon SQS**: Asynchronous queue processing for large file uploads or malware scanning tasks.  
+- **Amazon CloudWatch & GuardDuty**: System log monitoring and continuous threat detection.
 
-![IoT Weather Platform Architecture](/images/2-Proposal/platform_architecture.jpeg)
+### 4. Technical Implementation  
 
-### AWS Services Used
-- **AWS IoT Core**: Ingests MQTT data from 5 stations, scalable to 15.
-- **AWS Lambda**: Processes data and triggers Glue jobs (two functions).
-- **Amazon API Gateway**: Facilitates web app communication.
-- **Amazon S3**: Stores raw data in a data lake and processed outputs (two buckets).
-- **AWS Glue**: Crawlers catalog data, and ETL jobs transform and load it.
-- **AWS Amplify**: Hosts the Next.js web interface.
-- **Amazon Cognito**: Secures access for lab users.
+The project is implemented with the following technical requirements:
+- **Frontend**: A simple Web Application (SPA) using React/Next.js communicating with AWS via REST APIs.
+- **Backend (Serverless)**: Lambda functions written in Python/Node.js. Utilizing the boto3 SDK to interact with S3 and DynamoDB.
+- **Security**: Applying IAM Roles with the *Principle of Least Privilege* for each individual Lambda function.
 
-### Component Design
-- **Edge Devices**: Raspberry Pi collects and filters sensor data, sending it to IoT Core.
-- **Data Ingestion**: AWS IoT Core receives MQTT messages from the edge devices.
-- **Data Storage**: Raw data is stored in an S3 data lake; processed data is stored in another S3 bucket.
-- **Data Processing**: AWS Glue Crawlers catalog the data, and ETL jobs transform it for analysis.
-- **Web Interface**: AWS Amplify hosts a Next.js app for real-time dashboards and analytics.
-- **User Management**: Amazon Cognito manages user access, allowing up to 5 active accounts.
+### 5. Roadmap & Milestones  
+The project spans across the last 4 weeks of the internship:
+- **Week 9**: Business requirement analysis, system architecture design, and data flow modeling.
+- **Week 10**: Network setup, IAM authorization, and Amazon Cognito configuration. Developing the login/registration flow.
+- **Week 11**: Deploying the Serverless Backend (Lambda, API Gateway, DynamoDB, S3) and integrating SQS for asynchronous upload processing.
+- **Week 12**: Comprehensive testing (Function Test, Load Test, Security Test with GuardDuty), architecture optimization, and handover documentation.
 
-### 4. Technical Implementation
-**Implementation Phases**
-This project has two parts—setting up weather edge stations and building the weather platform—each following 4 phases:
-- Build Theory and Draw Architecture: Research Raspberry Pi setup with ESP32 sensors and design the AWS serverless architecture (1 month pre-internship)
-- Calculate Price and Check Practicality: Use AWS Pricing Calculator to estimate costs and adjust if needed (Month 1).
-- Fix Architecture for Cost or Solution Fit: Tweak the design (e.g., optimize Lambda with Next.js) to stay cost-effective and usable (Month 2).
-- Develop, Test, and Deploy: Code the Raspberry Pi setup, AWS services with CDK/SDK, and Next.js app, then test and release to production (Months 2-3).
+### 6. Budget Estimation  
+Expected deployment costs are extremely low due to the Pay-as-you-go model.  
+- **AWS Lambda**: ~$0.00 (within the free tier of 1 million requests/month).  
+- **Amazon S3**: ~$0.15 for storage and outbound data transfer.  
+- **DynamoDB**: ~$0.00 (within the 25GB free tier).  
+- **API Gateway & Cognito**: Free for low internal user volume.  
+- **Estimated Total Budget**: Under $1/month for the testing environment and roughly under $10/month for a medium-scale production environment.
 
-**Technical Requirements**
-- Weather Edge Station: Sensors (temperature, humidity, rainfall, wind speed), a microcontroller (ESP32), and a Raspberry Pi as the edge device. Raspberry Pi runs Raspbian, handles Docker for filtering, and sends 1 MB/day per station via MQTT over Wi-Fi.
-- Weather Platform: Practical knowledge of AWS Amplify (hosting Next.js), Lambda (minimal use due to Next.js), AWS Glue (ETL), S3 (two buckets), IoT Core (gateway and rules), and Cognito (5 users). Use AWS CDK/SDK to code interactions (e.g., IoT Core rules to S3). Next.js reduces Lambda workload for the fullstack web app.
+### 7. Risk Assessment & Contingency
+- **Data Leakage Risk:** High.  
+  *Mitigation:* Server-side encryption (S3 SSE) and blocking all Public access to S3. Granting only temporary presigned-URLs to the client.
+- **Large File Upload Bottleneck Risk:** Medium.  
+  *Mitigation:* Handling uploads directly via S3 Presigned URLs and using SQS for Lambda to process metadata in the background instead of passing massive payloads through API Gateway.
 
-### 5. Timeline & Milestones
-**Project Timeline**
-- Pre-Internship (Month 0): 1 month for planning and old station review.
-- Internship (Months 1-3): 3 months.
-    - Month 1: Study AWS and upgrade hardware.
-    - Month 2: Design and adjust architecture.
-    - Month 3: Implement, test, and launch.
-- Post-Launch: Up to 1 year for research.
-
-### 6. Budget Estimation
-You can find the budget estimation on the [AWS Pricing Calculator](https://calculator.aws/#/estimate?id=621f38b12a1ef026842ba2ddfe46ff936ed4ab01).  
-Or you can download the [Budget Estimation File](../attachments/budget_estimation.pdf).
-
-### Infrastructure Costs
-- AWS Services:
-    - AWS Lambda: $0.00/month (1,000 requests, 512 MB storage).
-    - S3 Standard: $0.15/month (6 GB, 2,100 requests, 1 GB scanned).
-    - Data Transfer: $0.02/month (1 GB inbound, 1 GB outbound).
-    - AWS Amplify: $0.35/month (256 MB, 500 ms requests).
-    - Amazon API Gateway: $0.01/month (2,000 requests).
-    - AWS Glue ETL Jobs: $0.02/month (2 DPUs).
-    - AWS Glue Crawlers: $0.07/month (1 crawler).
-    - MQTT (IoT Core): $0.08/month (5 devices, 45,000 messages).
-
-Total: $0.7/month, $8.40/12 months
-
-- Hardware: $265 one-time (Raspberry Pi 5 and sensors).
-
-### 7. Risk Assessment
-#### Risk Matrix
-- Network Outages: Medium impact, medium probability.
-- Sensor Failures: High impact, low probability.
-- Cost Overruns: Medium impact, low probability.
-
-#### Mitigation Strategies
-- Network: Local storage on Raspberry Pi with Docker.
-- Sensors: Regular checks and spares.
-- Cost: AWS budget alerts and optimization.
-
-#### Contingency Plans
-- Revert to manual methods if AWS fails.
-- Use CloudFormation for cost-related rollbacks.
-
-### 8. Expected Outcomes
-#### Technical Improvements: 
-Real-time data and analytics replace manual processes.  
-Scalable to 10-15 stations.
-#### Long-term Value
-1-year data foundation for AI research.  
-Reusable for future projects.
+### 8. Expected Outcomes  
+- Deliver a digitized, secure, and easily traceable document management system for the company.
+- Eliminate document fragmentation across disjointed platforms.
+- Master the design and implementation of Enterprise applications using AWS Serverless Architecture.

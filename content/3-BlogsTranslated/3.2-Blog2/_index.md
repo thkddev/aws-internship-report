@@ -5,122 +5,52 @@ weight: 1
 chapter: false
 pre: " <b> 3.2. </b> "
 ---
-{{% notice warning %}}
-⚠️ **Note:** The information below is for reference purposes only. Please **do not copy verbatim** for your report, including this warning.
-{{% /notice %}}
 
-# Getting Started with Healthcare Data Lakes: Using Microservices
+# Amazon Bedrock Baseline Architecture in an AWS Landing Zone: Deployment Platform for Enterprise Generative AI
 
-Data lakes can help hospitals and healthcare facilities turn data into business insights, maintain business continuity, and protect patient privacy. A **data lake** is a centralized, managed, and secure repository to store all your data, both in its raw and processed forms for analysis. Data lakes allow you to break down data silos and combine different types of analytics to gain insights and make better business decisions.
+Building an AI application is not overly difficult. However, when an enterprise has dozens of AI applications running concurrently, the challenge is no longer just connecting to an AI model, but managing the entire AI system securely, stably, and with ease of operation.
 
-This blog post is part of a larger series on getting started with setting up a healthcare data lake. In my final post of the series, *“Getting Started with Healthcare Data Lakes: Diving into Amazon Cognito”*, I focused on the specifics of using Amazon Cognito and Attribute Based Access Control (ABAC) to authenticate and authorize users in the healthcare data lake solution. In this blog, I detail how the solution evolved at a foundational level, including the design decisions I made and the additional features used. You can access the code samples for the solution in this Git repo for reference.
+Through the **Amazon Bedrock Baseline Architecture in an AWS Landing Zone**, AWS proposes a reference architecture to help enterprises build a Generative AI platform in a centralized manner, ensuring governance, security, and long-term scalability.
 
----
+![Amazon Bedrock Architecture](../../images/bedrock-architecture.png)
 
-## Architecture Guidance
+## Why is a standard architecture for Generative AI necessary?
 
-The main change since the last presentation of the overall architecture is the decomposition of a single service into a set of smaller services to improve maintainability and flexibility. Integrating a large volume of diverse healthcare data often requires specialized connectors for each format; by keeping them encapsulated separately as microservices, we can add, remove, and modify each connector without affecting the others. The microservices are loosely coupled via publish/subscribe messaging centered in what I call the “pub/sub hub.”
+In the experimental phase, each development team might build their own AI applications and connect directly to Amazon Bedrock.
+However, as the number of applications grows, enterprises face several challenges:
+- Difficulty managing access permissions.
+- Difficulty tracking AI usage costs.
+- Difficulty controlling data and traffic.
+- Difficulty applying unified security policies.
+- Difficulty performing auditing and compliance.
 
-This solution represents what I would consider another reasonable sprint iteration from my last post. The scope is still limited to the ingestion and basic parsing of **HL7v2 messages** formatted in **Encoding Rules 7 (ER7)** through a REST interface.
+## Proposed Architecture
 
-**The solution architecture is now as follows:**
+- **Service Network Account:** Manages network connections, controls AI access, manages security policies, orchestrates traffic across accounts, and centralizes all AI traffic at a single point.
+- **Generative AI Account:** Deploys Amazon Bedrock, Bedrock Knowledge Bases, Bedrock Guardrails, Foundation Models, and related AI services; enables centralized governance, cost tracking, and operational standardization.
+- **Workload Accounts:** Deploys customer chatbots, internal assistants, document processing, RAG applications, and business applications; accesses AI through a centralized control layer rather than connecting directly to Bedrock.
 
-> *Figure 1. Overall architecture; colored boxes represent distinct services.*
+## Highlights of the Architecture
 
----
+- Separates the AI Platform Account and Workload Account.
+- All AI traffic is centrally controlled via VPC Lattice.
+- Amazon Bedrock is deployed as a shared service for the entire organization.
+- Integrates Bedrock Guardrails to enhance content control and security.
+- Aligns with the multi-account model and AWS Landing Zone.
 
-While the term *microservices* has some inherent ambiguity, certain traits are common:  
-- Small, autonomous, loosely coupled  
-- Reusable, communicating through well-defined interfaces  
-- Specialized to do one thing well  
-- Often implemented in an **event-driven architecture**
+## Conclusion
 
-When determining where to draw boundaries between microservices, consider:  
-- **Intrinsic**: technology used, performance, reliability, scalability  
-- **Extrinsic**: dependent functionality, rate of change, reusability  
-- **Human**: team ownership, managing *cognitive load*
+Amazon Bedrock Baseline Architecture is not simply a technical architecture but a Generative AI governance model at the enterprise level.
 
----
+By centralizing AI resource management, controlling traffic, enhancing security, and standardizing operational processes, AWS helps enterprises solve the three biggest challenges when deploying AI:
+1. Security.
+2. Governance.
+3. Scalability.
 
-## Technology Choices and Communication Scope
+## Recommendations
 
-| Communication scope                       | Technologies / patterns to consider                                                        |
-| ----------------------------------------- | ------------------------------------------------------------------------------------------ |
-| Within a single microservice              | Amazon Simple Queue Service (Amazon SQS), AWS Step Functions                               |
-| Between microservices in a single service | AWS CloudFormation cross-stack references, Amazon Simple Notification Service (Amazon SNS) |
-| Between services                          | Amazon EventBridge, AWS Cloud Map, Amazon API Gateway                                      |
+- **For enterprises testing AI:** Start small, build governance early, standardize permissions.
+- **For enterprises scaling AI:** Separate the AI Account, centrally manage AI resources, track usage costs.
+- **For large-scale enterprises:** Build a shared AI Platform, deploy a Landing Zone, establish centralized governance, and set up AI Governance and AI Security.
 
----
-
-## The Pub/Sub Hub
-
-Using a **hub-and-spoke** architecture (or message broker) works well with a small number of tightly related microservices.  
-- Each microservice depends only on the *hub*  
-- Inter-microservice connections are limited to the contents of the published message  
-- Reduces the number of synchronous calls since pub/sub is a one-way asynchronous *push*
-
-Drawback: **coordination and monitoring** are needed to avoid microservices processing the wrong message.
-
----
-
-## Core Microservice
-
-Provides foundational data and communication layer, including:  
-- **Amazon S3** bucket for data  
-- **Amazon DynamoDB** for data catalog  
-- **AWS Lambda** to write messages into the data lake and catalog  
-- **Amazon SNS** topic as the *hub*  
-- **Amazon S3** bucket for artifacts such as Lambda code
-
-> Only allow indirect write access to the data lake through a Lambda function → ensures consistency.
-
----
-
-## Front Door Microservice
-
-- Provides an API Gateway for external REST interaction  
-- Authentication & authorization based on **OIDC** via **Amazon Cognito**  
-- Self-managed *deduplication* mechanism using DynamoDB instead of SNS FIFO because:  
-  1. SNS deduplication TTL is only 5 minutes  
-  2. SNS FIFO requires SQS FIFO  
-  3. Ability to proactively notify the sender that the message is a duplicate  
-
----
-
-## Staging ER7 Microservice
-
-- Lambda “trigger” subscribed to the pub/sub hub, filtering messages by attribute  
-- Step Functions Express Workflow to convert ER7 → JSON  
-- Two Lambdas:  
-  1. Fix ER7 formatting (newline, carriage return)  
-  2. Parsing logic  
-- Result or error is pushed back into the pub/sub hub  
-
----
-
-## New Features in the Solution
-
-### 1. AWS CloudFormation Cross-Stack References
-Example *outputs* in the core microservice:
-```yaml
-Outputs:
-  Bucket:
-    Value: !Ref Bucket
-    Export:
-      Name: !Sub ${AWS::StackName}-Bucket
-  ArtifactBucket:
-    Value: !Ref ArtifactBucket
-    Export:
-      Name: !Sub ${AWS::StackName}-ArtifactBucket
-  Topic:
-    Value: !Ref Topic
-    Export:
-      Name: !Sub ${AWS::StackName}-Topic
-  Catalog:
-    Value: !Ref Catalog
-    Export:
-      Name: !Sub ${AWS::StackName}-Catalog
-  CatalogArn:
-    Value: !GetAtt Catalog.Arn
-    Export:
-      Name: !Sub ${AWS::StackName}-CatalogArn
+**Reference:** [Amazon Bedrock baseline architecture in an AWS Landing Zone](https://aws.amazon.com/blogs/architecture/amazon-bedrock-baseline-architecture-in-an-aws-landing-zone/)

@@ -1,57 +1,26 @@
 ---
 title: "Week 6 Worklog"
 date: 2024-01-01
-weight: 1
+weight: 6
 chapter: false
 pre: " <b> 1.6. </b> "
 ---
-{{% notice warning %}} 
-⚠️ **Note:** The following information is for reference purposes only. Please **do not copy verbatim** for your own report, including this warning.
-{{% /notice %}}
-
 
 ### Week 6 Objectives:
-
-* Connect and get acquainted with members of First Cloud Journey.
-* Understand basic AWS services, how to use the console & CLI.
+* Master the 3-Tier application architecture (Web-App-DB) on AWS.
+* Understand the data ingest, storage, and processing workflows using Kinesis and Glue.
 
 ### Tasks to be carried out this week:
-| Day | Task                                                                                                                                                                                                   | Start Date | Completion Date | Reference Material                        |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------- | --------------- | ----------------------------------------- |
-| 2   | - Get acquainted with FCJ members <br> - Read and take note of internship unit rules and regulations                                                                                                   | 08/11/2025 | 08/11/2025      |
-| 3   | - Learn about AWS and its types of services <br>&emsp; + Compute <br>&emsp; + Storage <br>&emsp; + Networking <br>&emsp; + Database <br>&emsp; + ... <br>                                              | 08/12/2025 | 08/12/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 4   | - Create AWS Free Tier account <br> - Learn about AWS Console & AWS CLI <br> - **Practice:** <br>&emsp; + Create AWS account <br>&emsp; + Install & configure AWS CLI <br> &emsp; + How to use AWS CLI | 08/13/2025 | 08/13/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 5   | - Learn basic EC2: <br>&emsp; + Instance types <br>&emsp; + AMI <br>&emsp; + EBS <br>&emsp; + ... <br> - SSH connection methods to EC2 <br> - Learn about Elastic IP   <br>                            | 08/14/2025 | 08/15/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 6   | - **Practice:** <br>&emsp; + Launch an EC2 instance <br>&emsp; + Connect via SSH <br>&emsp; + Attach an EBS volume                                                                                     | 08/15/2025 | 08/15/2025      | <https://cloudjourney.awsstudygroup.com/> |
-
+| Day | Task | Start Date | Completion Date | Reference Material |
+| --- | ---- | ---------- | --------------- | ------------------ |
+| 2 | - Learn 3-Tier application architecture on AWS - VPC, Subnets, Security Groups, and Database Security Group | 25/05/2026 | 25/05/2026 | |
+| 3 | - Create EC2 instance for Application Server - Create DB Subnet Group and deploy Amazon RDS | 26/05/2026 | 26/05/2026 | |
+| 4 | - Deploy application to EC2 - Test connectivity between EC2 and RDS, perform data backup | 27/05/2026 | 27/05/2026 | |
+| 5 | - Learn data ingest and store processes - Create S3 Bucket, IAM Role, and Kinesis Data Firehose | 28/05/2026 | 28/05/2026 | |
+| 6 | - Create AWS Glue Crawler and Data Catalog - Test Data Lake, transform data, and visualize data | 29/05/2026 | 29/05/2026 | |
 
 ### Week 6 Achievements:
-
-* Understood what AWS is and mastered the basic service groups: 
-  * Compute
-  * Storage
-  * Networking 
-  * Database
-  * ...
-
-* Successfully created and configured an AWS Free Tier account.
-
-* Became familiar with the AWS Management Console and learned how to find, access, and use services via the web interface.
-
-* Installed and configured AWS CLI on the computer, including:
-  * Access Key
-  * Secret Key
-  * Default Region
-  * ...
-
-* Used AWS CLI to perform basic operations such as:
-
-  * Check account & configuration information
-  * Retrieve the list of regions
-  * View EC2 service
-  * Create and manage key pairs
-  * Check information about running services
-  * ...
-
-* Acquired the ability to connect between the web interface and CLI to manage AWS resources in parallel.
-* ...
+* Deeply understood and hands-on deployed the classic highly secure 3-Tier web application architecture on AWS (VPC, Subnets, Security Groups).
+* Successfully deployed a real-world application on EC2 as an Application Server and securely connected it to an Amazon RDS relational database.
+* Grasped the big picture of Data Lakes and the high-speed data ingestion process using Kinesis Data Firehose targeting Amazon S3.
+* Explored big data processing and visualization capabilities using AWS Glue Crawler and Data Catalog, preparing for in-depth analytics.

@@ -6,122 +6,72 @@ chapter: false
 pre: " <b> 3.3. </b> "
 ---
 
-{{% notice warning %}}
-⚠️ **Lưu ý:** Các thông tin dưới đây chỉ nhằm mục đích tham khảo, vui lòng **không sao chép nguyên văn** cho bài báo cáo của bạn kể cả warning này.
-{{% /notice %}}
+# Gửi báo cáo chi phí delta hàng ngày trong môi trường multi-account bằng AWS Lambda và Cost Explorer
 
-# Bắt đầu với healthcare data lakes: Sử dụng microservices
+Trong môi trường AWS multi-account, việc theo dõi chi phí luôn là một bài toán khá khó, đặc biệt khi đội ngũ finance hoặc quản lý không có quyền truy cập trực tiếp vào AWS Billing Console.
 
-Các data lake có thể giúp các bệnh viện và cơ sở y tế chuyển dữ liệu thành những thông tin chi tiết về doanh nghiệp và duy trì hoạt động kinh doanh liên tục, đồng thời bảo vệ quyền riêng tư của bệnh nhân. **Data lake** là một kho lưu trữ tập trung, được quản lý và bảo mật để lưu trữ tất cả dữ liệu của bạn, cả ở dạng ban đầu và đã xử lý để phân tích. data lake cho phép bạn chia nhỏ các kho chứa dữ liệu và kết hợp các loại phân tích khác nhau để có được thông tin chi tiết và đưa ra các quyết định kinh doanh tốt hơn.
+Trong quá trình tìm hiểu về cost management và automation trên AWS, mình đọc được một bài blog chia sẻ cách tự động gửi báo cáo chi phí delta hằng ngày trong môi trường multi-account. Mình thấy giải pháp này khá thực tế vì vừa giúp tăng khả năng “cost visibility”, vừa giảm đáng kể các thao tác thủ công trong quá trình quản lý chi phí cloud.
 
-Bài đăng trên blog này là một phần của loạt bài lớn hơn về việc bắt đầu cài đặt data lake dành cho lĩnh vực y tế. Trong bài đăng blog cuối cùng của tôi trong loạt bài, *“Bắt đầu với data lake dành cho lĩnh vực y tế: Đào sâu vào Amazon Cognito”*, tôi tập trung vào các chi tiết cụ thể của việc sử dụng Amazon Cognito và Attribute Based Access Control (ABAC) để xác thực và ủy quyền người dùng trong giải pháp data lake y tế. Trong blog này, tôi trình bày chi tiết cách giải pháp đã phát triển ở cấp độ cơ bản, bao gồm các quyết định thiết kế mà tôi đã đưa ra và các tính năng bổ sung được sử dụng. Bạn có thể truy cập các code samples cho giải pháp tại Git repo này để tham khảo.
+![Delta Cost Report Architecture](../../images/cost-report-architecture.png)
 
----
+## Vấn đề thường gặp
 
-## Hướng dẫn kiến trúc
+AWS Organizations cho phép quản lý và hợp nhất billing của nhiều account trong cùng một tổ chức. Tuy nhiên, báo cáo chi phí thường chỉ khả dụng cho những người có quyền truy cập billing ở management account.
+Điều này dẫn đến một số vấn đề:
+- Đội ngũ finance hoặc quản lý không có quyền truy cập AWS.
+- Việc chia sẻ báo cáo chi phí thường phải làm thủ công.
+- Khó theo dõi sự thay đổi chi phí giữa các account.
+- Thiếu khả năng “cost visibility” trong tổ chức.
+- Quy trình quản lý chi phí trở nên phức tạp hơn khi có nhiều account như Production, Non-Production hoặc Sandbox.
 
-Thay đổi chính kể từ lần trình bày cuối cùng của kiến trúc tổng thể là việc tách dịch vụ đơn lẻ thành một tập hợp các dịch vụ nhỏ để cải thiện khả năng bảo trì và tính linh hoạt. Việc tích hợp một lượng lớn dữ liệu y tế khác nhau thường yêu cầu các trình kết nối chuyên biệt cho từng định dạng; bằng cách giữ chúng được đóng gói riêng biệt với microservices, chúng ta có thể thêm, xóa và sửa đổi từng trình kết nối mà không ảnh hưởng đến những kết nối khác. Các microservices được kết nối rời thông qua tin nhắn publish/subscribe tập trung trong cái mà tôi gọi là “pub/sub hub”.
+## Giải pháp chính
 
-Giải pháp này đại diện cho những gì tôi sẽ coi là một lần lặp nước rút hợp lý khác từ last post của tôi. Phạm vi vẫn được giới hạn trong việc nhập và phân tích cú pháp đơn giản của các **HL7v2 messages** được định dạng theo **Quy tắc mã hóa 7 (ER7)** thông qua giao diện REST.
+Giải pháp sử dụng AWS Lambda để tự động tạo và gửi báo cáo “delta cost” hằng ngày qua email.
+“Delta cost” ở đây là phần chênh lệch chi phí giữa ngày hiện tại và ngày trước đó, giúp nhanh chóng phát hiện các biến động bất thường về chi phí cloud.
+Hệ thống tận dụng các native service của AWS như:
+- AWS Lambda
+- AWS Cost Explorer API
+- Amazon EventBridge
+- Amazon Simple Email Service (SES)
 
-**Kiến trúc giải pháp bây giờ như sau:**
+Điểm mình thấy hay là toàn bộ kiến trúc đều theo hướng serverless và managed service, nên gần như không cần quản lý hạ tầng vận hành.
 
-> *Hình 1. Kiến trúc tổng thể; những ô màu thể hiện những dịch vụ riêng biệt.*
+## Kiến trúc tổng quan
 
----
+Flow hoạt động:
+1. Amazon EventBridge kích hoạt Lambda theo lịch cron mỗi ngày.
+2. Lambda gọi AWS Cost Explorer API để lấy dữ liệu chi phí từ các account trong tổ chức.
+3. Lambda tính toán phần trăm thay đổi chi phí (delta) so với ngày trước đó.
+4. Dữ liệu được format thành báo cáo HTML.
+5. Amazon SES gửi email đến danh sách người nhận.
 
-Mặc dù thuật ngữ *microservices* có một số sự mơ hồ cố hữu, một số đặc điểm là chung:  
-- Chúng nhỏ, tự chủ, kết hợp rời rạc  
-- Có thể tái sử dụng, giao tiếp thông qua giao diện được xác định rõ  
-- Chuyên biệt để giải quyết một việc  
-- Thường được triển khai trong **event-driven architecture**
+## Lợi ích nổi bật
 
-Khi xác định vị trí tạo ranh giới giữa các microservices, cần cân nhắc:  
-- **Nội tại**: công nghệ được sử dụng, hiệu suất, độ tin cậy, khả năng mở rộng  
-- **Bên ngoài**: chức năng phụ thuộc, tần suất thay đổi, khả năng tái sử dụng  
-- **Con người**: quyền sở hữu nhóm, quản lý *cognitive load*
+- Tự động hóa hoàn toàn quy trình gửi báo cáo chi phí.
+- Giúp leadership và finance team dễ tiếp cận thông tin hơn.
+- Hoạt động hiệu quả trong môi trường multi-account.
+- Hỗ trợ tăng khả năng cost visibility trong tổ chức.
+- Dễ triển khai bằng CloudFormation template.
+- Có thể mở rộng để lưu lịch sử báo cáo lên S3 phục vụ phân tích dài hạn.
 
----
+Ngoài ra, giải pháp này cũng giúp technical team và finance team phối hợp hiệu quả hơn trong quá trình tối ưu chi phí cloud theo hướng FinOps.
 
-## Lựa chọn công nghệ và phạm vi giao tiếp
+## Các bước triển khai chính
 
-| Phạm vi giao tiếp                        | Các công nghệ / mô hình cần xem xét                                                        |
-| ---------------------------------------- | ------------------------------------------------------------------------------------------ |
-| Trong một microservice                   | Amazon Simple Queue Service (Amazon SQS), AWS Step Functions                               |
-| Giữa các microservices trong một dịch vụ | AWS CloudFormation cross-stack references, Amazon Simple Notification Service (Amazon SNS) |
-| Giữa các dịch vụ                         | Amazon EventBridge, AWS Cloud Map, Amazon API Gateway                                      |
+- Tải CloudFormation template từ bài blog gốc.
+- Cấu hình account IDs và email recipients.
+- Verify email trong Amazon SES.
+- Deploy stack.
+- Cấp Billing permission cho IAM Role.
+- Cấu hình EventBridge rule với cron expression.
+Sau khi hoàn tất, hệ thống sẽ tự động gửi báo cáo chi phí mỗi ngày qua email.
 
----
+## Nhận định cá nhân
 
-## The pub/sub hub
+Mình thấy giải pháp này khá thực tế vì nó giải quyết đúng bài toán mà nhiều team dùng AWS thường gặp: chi phí cloud tăng nhưng không phải lúc nào cũng theo dõi kịp.
 
-Việc sử dụng kiến trúc **hub-and-spoke** (hay message broker) hoạt động tốt với một số lượng nhỏ các microservices liên quan chặt chẽ.  
-- Mỗi microservice chỉ phụ thuộc vào *hub*  
-- Kết nối giữa các microservice chỉ giới hạn ở nội dung của message được xuất  
-- Giảm số lượng synchronous calls vì pub/sub là *push* không đồng bộ một chiều
+Điểm hay là kiến trúc khá gọn, chủ yếu dùng các native service của AWS như Lambda, EventBridge và SES nên triển khai không quá phức tạp. Với mình thì đây cũng là một ví dụ khá rõ cho cách AWS dùng automation để giảm các công việc thủ công trong vận hành hệ thống.
 
-Nhược điểm: cần **phối hợp và giám sát** để tránh microservice xử lý nhầm message.
+Ngoài việc gửi báo cáo chi phí, mình nghĩ mô hình này còn có thể mở rộng thêm như lưu lịch sử lên S3, tạo dashboard theo dõi hoặc kết hợp cảnh báo khi chi phí tăng bất thường.
 
----
-
-## Core microservice
-
-Cung cấp dữ liệu nền tảng và lớp truyền thông, gồm:  
-- **Amazon S3** bucket cho dữ liệu  
-- **Amazon DynamoDB** cho danh mục dữ liệu  
-- **AWS Lambda** để ghi message vào data lake và danh mục  
-- **Amazon SNS** topic làm *hub*  
-- **Amazon S3** bucket cho artifacts như mã Lambda
-
-> Chỉ cho phép truy cập ghi gián tiếp vào data lake qua hàm Lambda → đảm bảo nhất quán.
-
----
-
-## Front door microservice
-
-- Cung cấp API Gateway để tương tác REST bên ngoài  
-- Xác thực & ủy quyền dựa trên **OIDC** thông qua **Amazon Cognito**  
-- Cơ chế *deduplication* tự quản lý bằng DynamoDB thay vì SNS FIFO vì:
-  1. SNS deduplication TTL chỉ 5 phút
-  2. SNS FIFO yêu cầu SQS FIFO
-  3. Chủ động báo cho sender biết message là bản sao
-
----
-
-## Staging ER7 microservice
-
-- Lambda “trigger” đăng ký với pub/sub hub, lọc message theo attribute  
-- Step Functions Express Workflow để chuyển ER7 → JSON  
-- Hai Lambda:
-  1. Sửa format ER7 (newline, carriage return)
-  2. Parsing logic  
-- Kết quả hoặc lỗi được đẩy lại vào pub/sub hub
-
----
-
-## Tính năng mới trong giải pháp
-
-### 1. AWS CloudFormation cross-stack references
-Ví dụ *outputs* trong core microservice:
-```yaml
-Outputs:
-  Bucket:
-    Value: !Ref Bucket
-    Export:
-      Name: !Sub ${AWS::StackName}-Bucket
-  ArtifactBucket:
-    Value: !Ref ArtifactBucket
-    Export:
-      Name: !Sub ${AWS::StackName}-ArtifactBucket
-  Topic:
-    Value: !Ref Topic
-    Export:
-      Name: !Sub ${AWS::StackName}-Topic
-  Catalog:
-    Value: !Ref Catalog
-    Export:
-      Name: !Sub ${AWS::StackName}-Catalog
-  CatalogArn:
-    Value: !GetAtt Catalog.Arn
-    Export:
-      Name: !Sub ${AWS::StackName}-CatalogArn
+**Nguồn tham khảo:** [Email delta cost usage report in a multi-account organization using AWS Lambda](https://aws.amazon.com/vi/blogs/architecture/email-delta-cost-usage-report-in-a-multi-account-organization-using-aws-lambda/)

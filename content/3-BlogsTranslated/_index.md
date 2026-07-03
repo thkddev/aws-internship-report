@@ -12,20 +12,13 @@ pre: " <b> 3. </b> "
 
 This section will list and introduce the blogs you have translated. For example:
 
-###  [Blog 1 - Getting started with healthcare data lakes: Using microservices](3.1-Blog1/)
-This blog introduces how to start building a data lake in the healthcare sector by applying a microservices architecture. You will learn why data lakes are important for storing and analyzing diverse healthcare data (electronic medical records, lab test data, medical IoT devices…), how microservices help make the system more flexible, scalable, and easier to maintain. The article also guides you through the steps to set up the environment, organize the data processing pipeline, and ensure compliance with security & privacy standards such as HIPAA.
+###  [Blog 1 - How to Build a Cost-Effective AWS KMS Strategy for Multi-tenant Applications](3.1-Blog1/)
+This blog introduces a centralized key management approach to build a cost-effective AWS KMS strategy for multi-tenant applications. You will learn how to use a centralized key management layer along with IAM roles, aliases, and AWS STS to ensure strong security, reduce costs, and simplify management for SaaS applications at scale.
 
-###  [Blog 2 - ...](3.2-Blog2/)
-This blog introduces how to start building a data lake in the healthcare sector by applying a microservices architecture. You will learn why data lakes are important for storing and analyzing diverse healthcare data (electronic medical records, lab test data, medical IoT devices…), how microservices help make the system more flexible, scalable, and easier to maintain. The article also guides you through the steps to set up the environment, organize the data processing pipeline, and ensure compliance with security & privacy standards such as HIPAA.
+###  [Blog 2 - Amazon Bedrock Baseline Architecture in an AWS Landing Zone](3.2-Blog2/)
+This blog explores how to build a robust Generative AI deployment platform for enterprises using the Amazon Bedrock Baseline Architecture. You will understand why a standard architecture is necessary for AI governance, security, and scalability, and how separating service networks, AI platforms, and workloads can solve major enterprise challenges.
 
-###  [Blog 3 - ...](3.3-Blog3/)
-This blog introduces how to start building a data lake in the healthcare sector by applying a microservices architecture. You will learn why data lakes are important for storing and analyzing diverse healthcare data (electronic medical records, lab test data, medical IoT devices…), how microservices help make the system more flexible, scalable, and easier to maintain. The article also guides you through the steps to set up the environment, organize the data processing pipeline, and ensure compliance with security & privacy standards such as HIPAA.
+###  [Blog 3 - Emailing Daily Delta Cost Reports in a Multi-Account Environment Using AWS Lambda and Cost Explorer](3.3-Blog3/)
+This blog discusses an automated, serverless solution to generate and email daily delta cost reports across an AWS Organization. By leveraging AWS Lambda, Cost Explorer API, EventBridge, and SES, it enhances cost visibility for finance and management teams while reducing manual reporting efforts, serving as a practical approach to cloud financial management (FinOps).
 
-###  [Blog 4 - ...](3.4-Blog4/)
-This blog introduces how to start building a data lake in the healthcare sector by applying a microservices architecture. You will learn why data lakes are important for storing and analyzing diverse healthcare data (electronic medical records, lab test data, medical IoT devices…), how microservices help make the system more flexible, scalable, and easier to maintain. The article also guides you through the steps to set up the environment, organize the data processing pipeline, and ensure compliance with security & privacy standards such as HIPAA.
 
-###  [Blog 5 - ...](3.5-Blog5/)
-This blog introduces how to start building a data lake in the healthcare sector by applying a microservices architecture. You will learn why data lakes are important for storing and analyzing diverse healthcare data (electronic medical records, lab test data, medical IoT devices…), how microservices help make the system more flexible, scalable, and easier to maintain. The article also guides you through the steps to set up the environment, organize the data processing pipeline, and ensure compliance with security & privacy standards such as HIPAA.
-
-###  [Blog 6 - ...](3.6-Blog6/)
-This blog introduces how to start building a data lake in the healthcare sector by applying a microservices architecture. You will learn why data lakes are important for storing and analyzing diverse healthcare data (electronic medical records, lab test data, medical IoT devices…), how microservices help make the system more flexible, scalable, and easier to maintain. The article also guides you through the steps to set up the environment, organize the data processing pipeline, and ensure compliance with security & privacy standards such as HIPAA.

@@ -5,122 +5,69 @@ weight: 1
 chapter: false
 pre: " <b> 3.1. </b> "
 ---
-{{% notice warning %}}
-⚠️ **Lưu ý:** Các thông tin dưới đây chỉ nhằm mục đích tham khảo, vui lòng **không sao chép nguyên văn** cho bài báo cáo của bạn kể cả warning này.
-{{% /notice %}}
 
-# Bắt đầu với healthcare data lakes: Sử dụng microservices
+# CÁCH XÂY DỰNG CHIẾN LƯỢC AWS KMS TIẾT KIỆM CHI PHÍ CHO ỨNG DỤNG MULTI-TENANT
 
-Các data lake có thể giúp các bệnh viện và cơ sở y tế chuyển dữ liệu thành những thông tin chi tiết về doanh nghiệp và duy trì hoạt động kinh doanh liên tục, đồng thời bảo vệ quyền riêng tư của bệnh nhân. **Data lake** là một kho lưu trữ tập trung, được quản lý và bảo mật để lưu trữ tất cả dữ liệu của bạn, cả ở dạng ban đầu và đã xử lý để phân tích. data lake cho phép bạn chia nhỏ các kho chứa dữ liệu và kết hợp các loại phân tích khác nhau để có được thông tin chi tiết và đưa ra các quyết định kinh doanh tốt hơn.
+Trong quá trình học và thực tập, mình nhận ra rằng khi xây dựng ứng dụng SaaS phục vụ nhiều khách hàng (multi-tenant), việc quản lý mã hóa dữ liệu chỉ là một phần của bài toán. Thách thức thực sự xuất hiện khi cần cân bằng giữa bảo mật mạnh, chi phí hợp lý và khả năng quản lý dễ dàng khi số lượng tenant tăng lên. Amazon KMS cung cấp công cụ mã hóa mạnh mẽ, nhưng nếu tạo key riêng cho từng tenant và từng service thì chi phí sẽ tăng nhanh, việc quản lý trở nên phức tạp.
 
-Bài đăng trên blog này là một phần của loạt bài lớn hơn về việc bắt đầu cài đặt data lake dành cho lĩnh vực y tế. Trong bài đăng blog cuối cùng của tôi trong loạt bài, *“Bắt đầu với data lake dành cho lĩnh vực y tế: Đào sâu vào Amazon Cognito”*, tôi tập trung vào các chi tiết cụ thể của việc sử dụng Amazon Cognito và Attribute Based Access Control (ABAC) để xác thực và ủy quyền người dùng trong giải pháp data lake y tế. Trong blog này, tôi trình bày chi tiết cách giải pháp đã phát triển ở cấp độ cơ bản, bao gồm các quyết định thiết kế mà tôi đã đưa ra và các tính năng bổ sung được sử dụng. Bạn có thể truy cập các code samples cho giải pháp tại Git repo này để tham khảo.
+Để giải quyết vấn đề đó, AWS đề xuất cách tiếp cận tập trung hóa việc quản lý key. Giải pháp này xây dựng một lớp quản lý khóa trung tâm hoạt động bên trên AWS KMS, kết hợp cùng IAM role, alias, AWS STS và các service khác. Kiến trúc này giúp giảm chi phí, dễ quản lý, vẫn đảm bảo isolation giữa các tenant, đồng thời tận dụng tối đa khả năng mã hóa của KMS.
 
----
+![KMS Multi-tenant Architecture](../../images/kms-architecture.png)
 
-## Hướng dẫn kiến trúc
+## DƯỚI ĐÂY LÀ NHỮNG ĐIỂM NỔI BẬT CỦA GIẢI PHÁP:
 
-Thay đổi chính kể từ lần trình bày cuối cùng của kiến trúc tổng thể là việc tách dịch vụ đơn lẻ thành một tập hợp các dịch vụ nhỏ để cải thiện khả năng bảo trì và tính linh hoạt. Việc tích hợp một lượng lớn dữ liệu y tế khác nhau thường yêu cầu các trình kết nối chuyên biệt cho từng định dạng; bằng cách giữ chúng được đóng gói riêng biệt với microservices, chúng ta có thể thêm, xóa và sửa đổi từng trình kết nối mà không ảnh hưởng đến những kết nối khác. Các microservices được kết nối rời thông qua tin nhắn publish/subscribe tập trung trong cái mà tôi gọi là “pub/sub hub”.
+*   **Tập trung hóa quản lý key ở một account riêng**
+    Tất cả customer managed KMS key của các tenant đều được đặt ở Account A (Centralized key management service). Các service phục vụ khách hàng ở Account B chỉ được cấp quyền tạm thời khi cần dùng. Cách này tránh tình trạng key phân tán lung tung, giúp kiểm soát toàn bộ vòng đời của key (tạo, xoay, xóa) ở một chỗ.
+*   **Sử dụng alias và IAM role để chia sẻ key an toàn**
+    Mỗi tenant có một alias dạng `alias/customer-<tenant-id>`. Service B (thường là Lambda) nhận JWT chứa tenant ID, sau đó assume ServiceBRole → assume ServiceARole ở Account A để truy cập key qua alias. Nhờ AWS STS, quyền chỉ tồn tại tạm thời và được kiểm soát chặt chẽ.
+*   **Mã hóa dữ liệu client-side và lưu trữ an toàn**
+    Dữ liệu nhạy cảm (mật khẩu, API key, thông tin giấy phép…) được mã hóa bằng Boto3 hoặc AWS Encryption SDK trước khi lưu vào DynamoDB hoặc S3. Mỗi tenant dùng key riêng nên dữ liệu được isolation hoàn toàn, ngay cả khi lưu chung một database.
+*   **Dễ mở rộng khi hệ thống lớn**
+    Khi số tenant tăng từ hàng chục lên hàng nghìn hoặc hơn, kiến trúc vẫn hoạt động tốt. Chỉ cần tạo key mới và alias mới ở Account A là xong. Không cần thay đổi code ở các service facing customer. Chi phí vẫn kiểm soát được vì mỗi key chỉ tốn khoảng 1-3 USD/tháng.
+*   **Tuân thủ best practice security và vận hành**
+    Giải pháp sử dụng IAM policy với điều kiện (condition) để giới hạn quyền chỉ trên alias/customer-, kết hợp CloudTrail để audit. Điều này giúp giảm rủi ro và dễ tuân thủ các tiêu chuẩn bảo mật.
 
-Giải pháp này đại diện cho những gì tôi sẽ coi là một lần lặp nước rút hợp lý khác từ last post của tôi. Phạm vi vẫn được giới hạn trong việc nhập và phân tích cú pháp đơn giản của các **HL7v2 messages** được định dạng theo **Quy tắc mã hóa 7 (ER7)** thông qua giao diện REST.
+## CÁCH HOẠT ĐỘNG TRONG THỰC TẾ
 
-**Kiến trúc giải pháp bây giờ như sau:**
+Giả sử khách hàng gửi thông tin nhạy cảm (mật khẩu, API key, giấy phép...) qua Service B.
+*   Service B nhận JWT chứa tenant ID.
+*   Lambda (hoặc service khác) kiểm tra JWT.
+*   Assume Service B Role → Assume Service A Role ở Account A.
+*   Dùng alias (ví dụ: `alias/customer-<tenant-id>`) để truy cập key đúng của tenant đó.
+*   Mã hóa dữ liệu bằng Boto3 hoặc AWS Encryption SDK.
+*   Lưu dữ liệu đã mã hóa vào DynamoDB.
 
-> *Hình 1. Kiến trúc tổng thể; những ô màu thể hiện những dịch vụ riêng biệt.*
+Mọi thứ diễn ra mượt mà và dữ liệu luôn được bảo vệ bằng key riêng của từng tenant.
 
----
+## VAI TRÒ CỦA CÁC DỊCH VỤ AWS
 
-Mặc dù thuật ngữ *microservices* có một số sự mơ hồ cố hữu, một số đặc điểm là chung:  
-- Chúng nhỏ, tự chủ, kết hợp rời rạc  
-- Có thể tái sử dụng, giao tiếp thông qua giao diện được xác định rõ  
-- Chuyên biệt để giải quyết một việc  
-- Thường được triển khai trong **event-driven architecture**
+Kiến trúc được xây dựng dựa trên sự phối hợp rõ ràng của nhiều dịch vụ:
+- **AWS KMS**: Cung cấp customer managed key cho từng tenant.
+- **IAM & AWS STS**: Quản lý quyền assume role giữa các account.
+- **AWS Lambda**: Xử lý request, kiểm tra JWT và thực hiện mã hóa.
+- **Amazon DynamoDB / S3**: Nơi lưu dữ liệu đã mã hóa.
+- **Alias**: Giúp code sạch sẽ, dễ maintain mà không cần hardcode key ID.
 
-Khi xác định vị trí tạo ranh giới giữa các microservices, cần cân nhắc:  
-- **Nội tại**: công nghệ được sử dụng, hiệu suất, độ tin cậy, khả năng mở rộng  
-- **Bên ngoài**: chức năng phụ thuộc, tần suất thay đổi, khả năng tái sử dụng  
-- **Con người**: quyền sở hữu nhóm, quản lý *cognitive load*
+Mỗi thành phần đảm nhận một nhiệm vụ riêng biệt. Nhờ đó hệ thống dễ quản lý, dễ debug và giảm phụ thuộc vào một service duy nhất.
 
----
+## GIÁ TRỊ MANG LẠI CHO DOANH NGHIỆP
 
-## Lựa chọn công nghệ và phạm vi giao tiếp
+Việc áp dụng chiến lược KMS tập trung mang lại nhiều lợi ích thực tế:
+- Giảm đáng kể chi phí quản lý key.
+- Dễ dàng vận hành và audit khi key tập trung một chỗ.
+- Đảm bảo isolation và bảo mật cao giữa các tenant.
+- Hỗ trợ mở rộng nhanh khi business phát triển.
+- Giảm tải cho đội ngũ DevOps, không còn lo “key explosion”.
+- Linh hoạt áp dụng cho nhiều dịch vụ (DynamoDB, S3, EBS…).
 
-| Phạm vi giao tiếp                        | Các công nghệ / mô hình cần xem xét                                                        |
-| ---------------------------------------- | ------------------------------------------------------------------------------------------ |
-| Trong một microservice                   | Amazon Simple Queue Service (Amazon SQS), AWS Step Functions                               |
-| Giữa các microservices trong một dịch vụ | AWS CloudFormation cross-stack references, Amazon Simple Notification Service (Amazon SNS) |
-| Giữa các dịch vụ                         | Amazon EventBridge, AWS Cloud Map, Amazon API Gateway                                      |
+Đây là giải pháp phù hợp cho các ứng dụng SaaS, nền tảng doanh nghiệp, hệ thống xử lý dữ liệu nhạy cảm hoặc bất kỳ dự án multi-tenant nào trên AWS.
 
----
+## KẾT LUẬN
 
-## The pub/sub hub
+AWS KMS là dịch vụ mã hóa mạnh mẽ, tuy nhiên khi dùng cho multi-tenant ở quy mô lớn thì cần cách tiếp cận thông minh hơn để kiểm soát chi phí và vận hành. Bằng cách xây dựng dịch vụ quản lý khóa trung tâm, kết hợp IAM role, alias và quy trình assume role qua JWT, chúng ta có thể giải quyết tốt bài toán này.
 
-Việc sử dụng kiến trúc **hub-and-spoke** (hay message broker) hoạt động tốt với một số lượng nhỏ các microservices liên quan chặt chẽ.  
-- Mỗi microservice chỉ phụ thuộc vào *hub*  
-- Kết nối giữa các microservice chỉ giới hạn ở nội dung của message được xuất  
-- Giảm số lượng synchronous calls vì pub/sub là *push* không đồng bộ một chiều
+Giải pháp này thể hiện cách tiếp cận phổ biến trong kiến trúc AWS hiện đại: mỗi dịch vụ tập trung làm tốt một việc, sau đó kết nối với nhau để tạo thành hệ thống linh hoạt, an toàn và tiết kiệm.
 
-Nhược điểm: cần **phối hợp và giám sát** để tránh microservice xử lý nhầm message.
+Mình là thực tập sinh nên chưa được làm task thực tế về KMS multi-tenant, nhưng sau khi đọc bài gốc và diagram, mình thấy đây là pattern rất đáng học. Nó giúp mình hiểu rõ hơn về việc thiết kế hệ thống cloud cân bằng giữa security, chi phí và scalability.
 
----
-
-## Core microservice
-
-Cung cấp dữ liệu nền tảng và lớp truyền thông, gồm:  
-- **Amazon S3** bucket cho dữ liệu  
-- **Amazon DynamoDB** cho danh mục dữ liệu  
-- **AWS Lambda** để ghi message vào data lake và danh mục  
-- **Amazon SNS** topic làm *hub*  
-- **Amazon S3** bucket cho artifacts như mã Lambda
-
-> Chỉ cho phép truy cập ghi gián tiếp vào data lake qua hàm Lambda → đảm bảo nhất quán.
-
----
-
-## Front door microservice
-
-- Cung cấp API Gateway để tương tác REST bên ngoài  
-- Xác thực & ủy quyền dựa trên **OIDC** thông qua **Amazon Cognito**  
-- Cơ chế *deduplication* tự quản lý bằng DynamoDB thay vì SNS FIFO vì:
-  1. SNS deduplication TTL chỉ 5 phút
-  2. SNS FIFO yêu cầu SQS FIFO
-  3. Chủ động báo cho sender biết message là bản sao
-
----
-
-## Staging ER7 microservice
-
-- Lambda “trigger” đăng ký với pub/sub hub, lọc message theo attribute  
-- Step Functions Express Workflow để chuyển ER7 → JSON  
-- Hai Lambda:
-  1. Sửa format ER7 (newline, carriage return)
-  2. Parsing logic  
-- Kết quả hoặc lỗi được đẩy lại vào pub/sub hub
-
----
-
-## Tính năng mới trong giải pháp
-
-### 1. AWS CloudFormation cross-stack references
-Ví dụ *outputs* trong core microservice:
-```yaml
-Outputs:
-  Bucket:
-    Value: !Ref Bucket
-    Export:
-      Name: !Sub ${AWS::StackName}-Bucket
-  ArtifactBucket:
-    Value: !Ref ArtifactBucket
-    Export:
-      Name: !Sub ${AWS::StackName}-ArtifactBucket
-  Topic:
-    Value: !Ref Topic
-    Export:
-      Name: !Sub ${AWS::StackName}-Topic
-  Catalog:
-    Value: !Ref Catalog
-    Export:
-      Name: !Sub ${AWS::StackName}-Catalog
-  CatalogArn:
-    Value: !GetAtt Catalog.Arn
-    Export:
-      Name: !Sub ${AWS::StackName}-CatalogArn
+**Nguồn tham khảo:** [Simplify multi-tenant encryption with a cost-conscious AWS KMS key strategy](https://aws.amazon.com/vi/blogs/architecture/simplify-multi-tenant-encryption-with-a-cost-conscious-aws-kms-key-strategy/)

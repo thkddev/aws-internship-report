@@ -1,58 +1,26 @@
 ---
 title: "Worklog Tuần 6"
 date: 2024-01-01
-weight: 1
+weight: 6
 chapter: false
 pre: " <b> 1.6. </b> "
 ---
-{{% notice warning %}}
-⚠️ **Lưu ý:** Các thông tin dưới đây chỉ nhằm mục đích tham khảo, vui lòng **không sao chép nguyên văn** cho bài báo cáo của bạn kể cả warning này.
-{{% /notice %}}
-
 
 ### Mục tiêu tuần 6:
-
-* Kết nối, làm quen với các thành viên trong First Cloud Journey.
-* Hiểu dịch vụ AWS cơ bản, cách dùng console & CLI.
+* Nắm bắt kiến trúc ứng dụng 3-Tier (Web-App-DB) trên AWS.
+* Tìm hiểu quy trình thu thập, lưu trữ, xử lý dữ liệu với Kinesis và Glue.
 
 ### Các công việc cần triển khai trong tuần này:
-| Thứ | Công việc                                                                                                                                                                                   | Ngày bắt đầu | Ngày hoàn thành | Nguồn tài liệu                            |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ | --------------- | ----------------------------------------- |
-| 2   | - Làm quen với các thành viên FCJ <br> - Đọc và lưu ý các nội quy, quy định tại đơn vị thực tập                                                                                             | 11/08/2025   | 11/08/2025      |
-| 3   | - Tìm hiểu AWS và các loại dịch vụ <br>&emsp; + Compute <br>&emsp; + Storage <br>&emsp; + Networking <br>&emsp; + Database <br>&emsp; + ... <br>                                            | 12/08/2025   | 12/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 4   | - Tạo AWS Free Tier account <br> - Tìm hiểu AWS Console & AWS CLI <br> - **Thực hành:** <br>&emsp; + Tạo AWS account <br>&emsp; + Cài AWS CLI & cấu hình <br> &emsp; + Cách sử dụng AWS CLI | 13/08/2025   | 13/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 5   | - Tìm hiểu EC2 cơ bản: <br>&emsp; + Instance types <br>&emsp; + AMI <br>&emsp; + EBS <br>&emsp; + ... <br> - Các cách remote SSH vào EC2 <br> - Tìm hiểu Elastic IP   <br>                  | 14/08/2025   | 15/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 6   | - **Thực hành:** <br>&emsp; + Tạo EC2 instance <br>&emsp; + Kết nối SSH <br>&emsp; + Gắn EBS volume                                                                                         | 15/08/2025   | 15/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-
+| Thứ | Công việc | Ngày bắt đầu | Ngày hoàn thành | Nguồn tài liệu |
+| --- | --------- | ------------ | --------------- | -------------- |
+| 2 | - Tìm hiểu kiến trúc ứng dụng 3-Tier trên AWS - VPC, Subnet, Security Group và Database Security Group | 25/05/2026 | 25/05/2026 | |
+| 3 | - Tạo EC2 Instance cho Application Server - Tạo DB Subnet Group và triển khai Amazon RDS | 26/05/2026 | 26/05/2026 | |
+| 4 | - Deploy ứng dụng lên EC2 - Kiểm tra kết nối giữa EC2 và RDS, thực hiện backup dữ liệu | 27/05/2026 | 27/05/2026 | |
+| 5 | - Tìm hiểu quy trình Ingest and Store Data - Tạo S3 Bucket, IAM Role và Kinesis Data Firehose | 28/05/2026 | 28/05/2026 | |
+| 6 | - Tạo AWS Glue Crawler và Data Catalog - Kiểm tra Data Lake, transform data và trực quan hóa dữ liệu | 29/05/2026 | 29/05/2026 | |
 
 ### Kết quả đạt được tuần 6:
-* Hiểu AWS là gì và nắm được các nhóm dịch vụ cơ bản: 
-  * Compute
-  * Storage
-  * Networking 
-  * Database
-  * ...
-
-* Đã tạo và cấu hình AWS Free Tier account thành công.
-
-* Làm quen với AWS Management Console và biết cách tìm, truy cập, sử dụng dịch vụ từ giao diện web.
-
-* Cài đặt và cấu hình AWS CLI trên máy tính bao gồm:
-  * Access Key
-  * Secret Key
-  * Region mặc định
-  * ...
-
-* Sử dụng AWS CLI để thực hiện các thao tác cơ bản như:
-
-  * Kiểm tra thông tin tài khoản & cấu hình
-  * Lấy danh sách region
-  * Xem dịch vụ EC2
-  * Tạo và quản lý key pair
-  * Kiểm tra thông tin dịch vụ đang chạy
-  * ...
-
-* Có khả năng kết nối giữa giao diện web và CLI để quản lý tài nguyên AWS song song.
-* ...
-
-
+* Hiểu sâu sắc và tự tay triển khai kiến trúc ứng dụng web 3 lớp (3-Tier) kinh điển trên AWS với tính bảo mật cao (VPC, Subnet, Security Group).
+* Triển khai thành công ứng dụng thực tế trên EC2 làm Application Server và kết nối an toàn với cơ sở dữ liệu quan hệ Amazon RDS.
+* Nắm được bức tranh toàn cảnh về Data Lake và quy trình nạp (Ingest) dữ liệu tốc độ cao bằng Kinesis Data Firehose lưu vào Amazon S3.
+* Khám phá năng lực xử lý và trực quan hóa dữ liệu lớn thông qua AWS Glue Crawler và Data Catalog, chuẩn bị cho phân tích chuyên sâu.

@@ -5,122 +5,73 @@ weight: 1
 chapter: false
 pre: " <b> 3.3. </b> "
 ---
-{{% notice warning %}}
-⚠️ **Note:** The information below is for reference purposes only. Please **do not copy verbatim** for your report, including this warning.
-{{% /notice %}}
 
-# Getting Started with Healthcare Data Lakes: Using Microservices
+# Emailing Daily Delta Cost Reports in a Multi-Account Environment Using AWS Lambda and Cost Explorer
 
-Data lakes can help hospitals and healthcare facilities turn data into business insights, maintain business continuity, and protect patient privacy. A **data lake** is a centralized, managed, and secure repository to store all your data, both in its raw and processed forms for analysis. Data lakes allow you to break down data silos and combine different types of analytics to gain insights and make better business decisions.
+In an AWS multi-account environment, tracking costs is always a challenging task, especially when finance teams or management do not have direct access to the AWS Billing Console.
 
-This blog post is part of a larger series on getting started with setting up a healthcare data lake. In my final post of the series, *“Getting Started with Healthcare Data Lakes: Diving into Amazon Cognito”*, I focused on the specifics of using Amazon Cognito and Attribute Based Access Control (ABAC) to authenticate and authorize users in the healthcare data lake solution. In this blog, I detail how the solution evolved at a foundational level, including the design decisions I made and the additional features used. You can access the code samples for the solution in this Git repo for reference.
+While researching cost management and automation on AWS, I read a blog post sharing how to automatically send daily delta cost reports in a multi-account environment. I find this solution highly practical because it increases "cost visibility" while significantly reducing manual operations in cloud cost management.
 
----
+![Delta Cost Report Architecture](../../images/cost-report-architecture.png)
 
-## Architecture Guidance
+## Common Problems
 
-The main change since the last presentation of the overall architecture is the decomposition of a single service into a set of smaller services to improve maintainability and flexibility. Integrating a large volume of diverse healthcare data often requires specialized connectors for each format; by keeping them encapsulated separately as microservices, we can add, remove, and modify each connector without affecting the others. The microservices are loosely coupled via publish/subscribe messaging centered in what I call the “pub/sub hub.”
+AWS Organizations allows managing and consolidating the billing of multiple accounts within the same organization. However, cost reports are usually only available to those with billing access in the management account.
+This leads to several issues:
+- Finance teams or management lack AWS access.
+- Sharing cost reports is often a manual process.
+- Difficulty tracking cost changes across accounts.
+- Lack of "cost visibility" within the organization.
+- Cost management processes become more complex with multiple accounts like Production, Non-Production, or Sandbox.
 
-This solution represents what I would consider another reasonable sprint iteration from my last post. The scope is still limited to the ingestion and basic parsing of **HL7v2 messages** formatted in **Encoding Rules 7 (ER7)** through a REST interface.
+## Core Solution
 
-**The solution architecture is now as follows:**
+The solution uses AWS Lambda to automatically generate and email daily "delta cost" reports.
+"Delta cost" refers to the cost difference between the current day and the previous day, helping to quickly detect abnormal fluctuations in cloud costs.
+The system leverages native AWS services such as:
+- AWS Lambda
+- AWS Cost Explorer API
+- Amazon EventBridge
+- Amazon Simple Email Service (SES)
 
-> *Figure 1. Overall architecture; colored boxes represent distinct services.*
+What I find interesting is that the entire architecture is serverless and based on managed services, requiring almost no infrastructure management.
 
----
+## Architecture Overview
 
-While the term *microservices* has some inherent ambiguity, certain traits are common:  
-- Small, autonomous, loosely coupled  
-- Reusable, communicating through well-defined interfaces  
-- Specialized to do one thing well  
-- Often implemented in an **event-driven architecture**
+Workflow:
+1. Amazon EventBridge triggers Lambda on a daily cron schedule.
+2. Lambda calls the AWS Cost Explorer API to retrieve cost data from accounts in the organization.
+3. Lambda calculates the percentage change in cost (delta) compared to the previous day.
+4. The data is formatted into an HTML report.
+5. Amazon SES sends the email to the list of recipients.
 
-When determining where to draw boundaries between microservices, consider:  
-- **Intrinsic**: technology used, performance, reliability, scalability  
-- **Extrinsic**: dependent functionality, rate of change, reusability  
-- **Human**: team ownership, managing *cognitive load*
+## Key Benefits
 
----
+- Fully automates the cost reporting process.
+- Makes information easily accessible to leadership and finance teams.
+- Operates effectively in a multi-account environment.
+- Supports increased cost visibility across the organization.
+- Easy to deploy using a CloudFormation template.
+- Can be extended to store report history in S3 for long-term analysis.
 
-## Technology Choices and Communication Scope
+Additionally, this solution helps technical and finance teams collaborate more effectively in optimizing cloud costs following FinOps principles.
 
-| Communication scope                       | Technologies / patterns to consider                                                        |
-| ----------------------------------------- | ------------------------------------------------------------------------------------------ |
-| Within a single microservice              | Amazon Simple Queue Service (Amazon SQS), AWS Step Functions                               |
-| Between microservices in a single service | AWS CloudFormation cross-stack references, Amazon Simple Notification Service (Amazon SNS) |
-| Between services                          | Amazon EventBridge, AWS Cloud Map, Amazon API Gateway                                      |
+## Main Deployment Steps
 
----
+- Download the CloudFormation template from the original blog post.
+- Configure account IDs and email recipients.
+- Verify emails in Amazon SES.
+- Deploy the stack.
+- Grant Billing permissions to the IAM Role.
+- Configure an EventBridge rule with a cron expression.
+Once completed, the system will automatically send daily cost reports via email.
 
-## The Pub/Sub Hub
+## Personal Thoughts
 
-Using a **hub-and-spoke** architecture (or message broker) works well with a small number of tightly related microservices.  
-- Each microservice depends only on the *hub*  
-- Inter-microservice connections are limited to the contents of the published message  
-- Reduces the number of synchronous calls since pub/sub is a one-way asynchronous *push*
+I find this solution quite practical as it addresses a common problem for many teams using AWS: cloud costs increase, but they are not always tracked in time.
 
-Drawback: **coordination and monitoring** are needed to avoid microservices processing the wrong message.
+The great thing is that the architecture is compact, primarily using native AWS services like Lambda, EventBridge, and SES, so deployment is not overly complex. To me, this is also a clear example of how AWS uses automation to reduce manual tasks in system operations.
 
----
+Beyond just sending cost reports, I think this model could be expanded by saving history to S3, creating monitoring dashboards, or incorporating alerts when costs rise abnormally.
 
-## Core Microservice
-
-Provides foundational data and communication layer, including:  
-- **Amazon S3** bucket for data  
-- **Amazon DynamoDB** for data catalog  
-- **AWS Lambda** to write messages into the data lake and catalog  
-- **Amazon SNS** topic as the *hub*  
-- **Amazon S3** bucket for artifacts such as Lambda code
-
-> Only allow indirect write access to the data lake through a Lambda function → ensures consistency.
-
----
-
-## Front Door Microservice
-
-- Provides an API Gateway for external REST interaction  
-- Authentication & authorization based on **OIDC** via **Amazon Cognito**  
-- Self-managed *deduplication* mechanism using DynamoDB instead of SNS FIFO because:  
-  1. SNS deduplication TTL is only 5 minutes  
-  2. SNS FIFO requires SQS FIFO  
-  3. Ability to proactively notify the sender that the message is a duplicate  
-
----
-
-## Staging ER7 Microservice
-
-- Lambda “trigger” subscribed to the pub/sub hub, filtering messages by attribute  
-- Step Functions Express Workflow to convert ER7 → JSON  
-- Two Lambdas:  
-  1. Fix ER7 formatting (newline, carriage return)  
-  2. Parsing logic  
-- Result or error is pushed back into the pub/sub hub  
-
----
-
-## New Features in the Solution
-
-### 1. AWS CloudFormation Cross-Stack References
-Example *outputs* in the core microservice:
-```yaml
-Outputs:
-  Bucket:
-    Value: !Ref Bucket
-    Export:
-      Name: !Sub ${AWS::StackName}-Bucket
-  ArtifactBucket:
-    Value: !Ref ArtifactBucket
-    Export:
-      Name: !Sub ${AWS::StackName}-ArtifactBucket
-  Topic:
-    Value: !Ref Topic
-    Export:
-      Name: !Sub ${AWS::StackName}-Topic
-  Catalog:
-    Value: !Ref Catalog
-    Export:
-      Name: !Sub ${AWS::StackName}-Catalog
-  CatalogArn:
-    Value: !GetAtt Catalog.Arn
-    Export:
-      Name: !Sub ${AWS::StackName}-CatalogArn
+**Reference:** [Email delta cost usage report in a multi-account organization using AWS Lambda](https://aws.amazon.com/vi/blogs/architecture/email-delta-cost-usage-report-in-a-multi-account-organization-using-aws-lambda/)

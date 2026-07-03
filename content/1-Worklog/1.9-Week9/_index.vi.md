@@ -1,59 +1,26 @@
 ---
 title: "Worklog Tuần 9"
 date: 2024-01-01
-weight: 1
+weight: 9
 chapter: false
 pre: " <b> 1.9. </b> "
 ---
-{{% notice warning %}}
-⚠️ **Lưu ý:** Các thông tin dưới đây chỉ nhằm mục đích tham khảo, vui lòng **không sao chép nguyên văn** cho bài báo cáo của bạn kể cả warning này.
-{{% /notice %}}
-
 
 ### Mục tiêu tuần 9:
-
-* Kết nối, làm quen với các thành viên trong First Cloud Journey.
-* Hiểu dịch vụ AWS cơ bản, cách dùng console & CLI.
+* Phân tích bài toán, thiết kế kiến trúc hệ thống AWS cho dự án DMS.
+* Lập kế hoạch triển khai chi tiết.
 
 ### Các công việc cần triển khai trong tuần này:
-| Thứ | Công việc                                                                                                                                                                                   | Ngày bắt đầu | Ngày hoàn thành | Nguồn tài liệu                            |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ | --------------- | ----------------------------------------- |
-| 2   | - Làm quen với các thành viên FCJ <br> - Đọc và lưu ý các nội quy, quy định tại đơn vị thực tập                                                                                             | 11/08/2025   | 11/08/2025      |
-| 3   | - Tìm hiểu AWS và các loại dịch vụ <br>&emsp; + Compute <br>&emsp; + Storage <br>&emsp; + Networking <br>&emsp; + Database <br>&emsp; + ... <br>                                            | 12/08/2025   | 12/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 4   | - Tạo AWS Free Tier account <br> - Tìm hiểu AWS Console & AWS CLI <br> - **Thực hành:** <br>&emsp; + Tạo AWS account <br>&emsp; + Cài AWS CLI & cấu hình <br> &emsp; + Cách sử dụng AWS CLI | 13/08/2025   | 13/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 5   | - Tìm hiểu EC2 cơ bản: <br>&emsp; + Instance types <br>&emsp; + AMI <br>&emsp; + EBS <br>&emsp; + ... <br> - Các cách remote SSH vào EC2 <br> - Tìm hiểu Elastic IP   <br>                  | 14/08/2025   | 15/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 6   | - **Thực hành:** <br>&emsp; + Tạo EC2 instance <br>&emsp; + Kết nối SSH <br>&emsp; + Gắn EBS volume                                                                                         | 15/08/2025   | 15/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-
+| Thứ | Công việc | Ngày bắt đầu | Ngày hoàn thành | Nguồn tài liệu |
+| --- | --------- | ------------ | --------------- | -------------- |
+| 2 | - Phân tích bài toán DMS - Xác định user, phòng ban, metadata, permission, audit log và rủi ro dữ liệu | 15/06/2026 | 15/06/2026 | |
+| 3 | - Thiết kế kiến trúc AWS cho DMS - React, Cognito, API Gateway, Lambda, S3, DynamoDB và CloudFront | 16/06/2026 | 16/06/2026 | |
+| 4 | - Lập chính sách file - Allowlist định dạng, giới hạn dung lượng, checksum, malware scanning và quarantine bucket | 17/06/2026 | 17/06/2026 | |
+| 5 | - Tạo instruction.md, brainstorming.md và analysis_plan.md để quản lý phạm vi và kế hoạch triển khai | 18/06/2026 | 18/06/2026 | |
+| 6 | - Vẽ sơ đồ kiến trúc AWS/VPC cho DMS và chuẩn bị nội dung báo cáo tuần 9 | 19/06/2026 | 19/06/2026 | |
 
 ### Kết quả đạt được tuần 9:
-
-* Hiểu AWS là gì và nắm được các nhóm dịch vụ cơ bản: 
-  * Compute
-  * Storage
-  * Networking 
-  * Database
-  * ...
-
-* Đã tạo và cấu hình AWS Free Tier account thành công.
-
-* Làm quen với AWS Management Console và biết cách tìm, truy cập, sử dụng dịch vụ từ giao diện web.
-
-* Cài đặt và cấu hình AWS CLI trên máy tính bao gồm:
-  * Access Key
-  * Secret Key
-  * Region mặc định
-  * ...
-
-* Sử dụng AWS CLI để thực hiện các thao tác cơ bản như:
-
-  * Kiểm tra thông tin tài khoản & cấu hình
-  * Lấy danh sách region
-  * Xem dịch vụ EC2
-  * Tạo và quản lý key pair
-  * Kiểm tra thông tin dịch vụ đang chạy
-  * ...
-
-* Có khả năng kết nối giữa giao diện web và CLI để quản lý tài nguyên AWS song song.
-* ...
-
-
+* Hoàn thiện phân tích thiết kế chi tiết (Analysis Plan) cho hệ thống DMS, xác định rõ các rủi ro bảo mật và đối tượng người dùng.
+* Xây dựng xong sơ đồ kiến trúc đám mây chuẩn mực kết hợp React, Cognito, API Gateway, Lambda, S3 và DynamoDB.
+* Thiết lập chặt chẽ các chính sách bảo mật cho file như giới hạn định dạng, dung lượng, kiểm tra checksum và quét mã độc (Malware Scanning).
+* Chuẩn bị sẵn sàng hệ thống tài liệu quản trị (instruction.md, brainstorming.md) làm kim chỉ nam cho quá trình code thực tế.
