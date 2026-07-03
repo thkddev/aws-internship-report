@@ -1,31 +1,47 @@
 ---
 title: "Workshop"
-date: 2024-01-01
+date: 2026-07-03
 weight: 5
 chapter: false
 pre: " <b> 5. </b> "
 ---
-{{% notice warning %}}
-⚠️ **Note:** The information below is for reference purposes only. Please **do not copy verbatim** for your report, including this warning.
-{{% /notice %}}
 
-# Secure Hybrid Access to S3 using VPC Endpoints
+# Document Management System (DMS) on AWS Serverless
 
 #### Overview
 
-**AWS PrivateLink** provides private connectivity to AWS services from VPCs and your on-premises networks, without exposing your traffic to the Public Internet.
+The **Document Management System (DMS)** is a cloud-native application built entirely on the **AWS Serverless** ecosystem. It allows internal users to securely upload, version, share, and audit company documents — without managing any servers.
 
-In this lab, you will learn how to create, configure, and test VPC endpoints that enable your workloads to reach AWS services without traversing the Public Internet.
+The system is deployed via **AWS CDK** (Infrastructure as Code) and integrates the following core AWS services:
 
-You will create two types of endpoints to access Amazon S3: a Gateway VPC endpoint, and an Interface VPC endpoint. These two types of VPC endpoints offer different benefits depending on if you are accessing Amazon S3 from the cloud or your on-premises location
-+ **Gateway** - Create a gateway endpoint to send traffic to Amazon S3 or DynamoDB using private IP addresses.You route traffic from your VPC to the gateway endpoint using route tables.
-+ **Interface** - Create an interface endpoint to send traffic to endpoint services that use a Network Load Balancer to distribute traffic. Traffic destined for the endpoint service is resolved using DNS.
+- **Amazon Cognito** — User authentication and role-based access control (EMPLOYEE / DEPARTMENT_ADMIN / SYSTEM_ADMIN)
+- **Amazon API Gateway** — Single REST API entry point with Cognito Authorizer
+- **AWS Lambda** — Serverless business logic handlers (Node.js 22, ARM64)
+- **Amazon S3** — Private document storage (DocumentsBucket) and upload quarantine (QuarantineBucket)
+- **Amazon DynamoDB** — Single-table design with GSI indexes for metadata, versioning, sharing, and audit logs
+- **Amazon SQS** — Asynchronous upload processing queue with Dead Letter Queue
+- **Amazon GuardDuty** — Malware Protection scanning for uploaded files
+- **Amazon CloudFront** — CDN delivery for the React frontend
+- **Amazon CloudWatch** — Centralized log monitoring and cost alerting
+- **Amazon SNS** — Email alerts for anomalous cost or system errors
 
-#### Content
+#### Architecture
 
-1. [Workshop overview](5.1-Workshop-overview)
-2. [Prerequiste](5.2-Prerequiste/)
-3. [Access S3 from VPC](5.3-S3-vpc/)
-4. [Access S3 from On-premises](5.4-S3-onprem/)
-5. [VPC Endpoint Policies (Bonus)](5.5-Policy/)
-6. [Clean up](5.6-Cleanup/)
+The data flow follows this pattern:
+
+1. The user logs in via the React frontend using **Cognito** and receives a JWT token.
+2. All API calls go through **API Gateway**, which validates the JWT via Cognito Authorizer.
+3. File uploads use **Presigned URLs** — the frontend uploads directly to **QuarantineBucket** (S3), bypassing API Gateway.
+4. An **S3 event notification** triggers an **SQS message** when a new file lands in the quarantine bucket.
+5. **GuardDuty Malware Protection** scans the file and tags it with `CLEAN` or `THREAT_FOUND`.
+6. A **Lambda** worker polls the SQS queue, reads the GuardDuty scan tag, moves clean files to **DocumentsBucket**, and writes metadata + version records to **DynamoDB**.
+7. Document sharing, audit logs, analytics, and user management are all handled by dedicated **Lambda** functions.
+
+#### Workshop Content
+
+1. [Workshop Overview](5.1-Workshop-overview/)
+2. [Prerequisites](5.2-Prerequiste/)
+3. [Deploy Infrastructure with AWS CDK](5.3-S3-vpc/)
+4. [Configure Backend & Test APIs](5.4-S3-onprem/)
+5. [Security & Monitoring with GuardDuty and CloudWatch](5.5-Policy/)
+6. [Clean Up Resources](5.6-Cleanup/)

@@ -1,95 +1,81 @@
 ---
-title : "VPC Endpoint Policies"
-date : 2024-01-01
-weight : 5
-chapter : false
-pre : " <b> 5.5 </b> "
+title: "Bảo mật & Giám sát"
+date: 2026-07-03
+weight: 5
+chapter: false
+pre: " <b> 5.5. </b> "
 ---
 
-Khi bạn tạo một Interface Endpoint  hoặc cổng, bạn có thể đính kèm một chính sách điểm cuối để kiểm soát quyền truy cập vào dịch vụ mà bạn đang kết nối. Chính sách VPC Endpoint là chính sách tài nguyên IAM mà bạn đính kèm vào điểm cuối. Nếu bạn không đính kèm chính sách khi tạo điểm cuối, thì AWS sẽ đính kèm chính sách mặc định cho bạn để cho phép toàn quyền truy cập vào dịch vụ thông qua điểm cuối.
+Hệ thống DMS áp dụng nhiều lớp bảo mật và giám sát để bảo vệ dữ liệu và phát hiện bất thường theo thời gian thực.
 
-Bạn có thể tạo chính sách chỉ hạn chế quyền truy cập vào các S3 bucket cụ thể. Điều này hữu ích nếu bạn chỉ muốn một số Bộ chứa S3 nhất định có thể truy cập được thông qua điểm cuối.
+#### 1. IAM — Nguyên tắc Quyền Tối Thiểu
 
-Trong phần này, bạn sẽ tạo chính sách VPC Endpoint hạn chế quyền truy cập vào S3 bucket được chỉ định trong chính sách VPC Endpoint.
+Mỗi Lambda function có **IAM role riêng** với chỉ các quyền cần thiết:
 
-![endpoint diagram](/images/5-Workshop/5.5-Policy/s3-bucket-policy.png)
+| Lambda | Quyền được cấp |
+|---|---|
+| `documents` | `dynamodb:Query` trên bảng Documents (chỉ đọc) |
+| `upload-intents` | `dynamodb:PutItem` + `s3:PutObject` chỉ trên QuarantineBucket |
+| `download-intents` | `dynamodb:GetItem` + `s3:GetObject` chỉ trên DocumentsBucket |
+| `admin-users` | `cognito-idp:AdminCreateUser`, `AdminAddUserToGroup`,... |
+| `process-upload` | `s3:GetObject` từ Quarantine + `s3:PutObject` vào Documents + `dynamodb:PutItem` |
 
-#### Kết nối tới EC2 và xác minh kết nối tới S3. 
+Không có Lambda function nào được cấp quyền `*` hay quyền vượt phạm vi cần thiết.
 
-1. Bắt đầu một phiên AWS Session Manager mới trên máy chủ có tên là Test-Gateway-Endpoint. Từ phiên này, xác minh rằng bạn có thể liệt kê nội dung của bucket mà bạn đã tạo trong Phần 1: Truy cập S3 từ VPC.
+#### 2. S3 — Bucket Private & Presigned URL
 
-```
-aws s3 ls s3://<your-bucket-name>
-```
-![test](/images/5-Workshop/5.5-Policy/test1.png)
+- Tất cả 3 S3 bucket đều bật **Block All Public Access**.
+- Tài liệu **không bao giờ truy cập được** qua URL công khai.
+- Quyền truy cập chỉ được cấp thông qua **Presigned URL có thời hạn** do Lambda tạo ra:
+  - Upload: Presigned PUT URL (hết hạn sau ~15 phút)
+  - Download: Presigned GET URL (hết hạn sau ~5 phút)
+- Mã hóa server-side (SSE-S3) được áp dụng cho tất cả object được lưu trữ.
 
-Nội dung của bucket bao gồm hai tệp có dung lượng 1GB đã được tải lên trước đó.
+#### 3. GuardDuty — Malware Protection
 
-2. Tạo một bucket S3 mới; tuân thủ mẫu đặt tên mà bạn đã sử dụng trong Phần 1, nhưng thêm '-2' vào tên. Để các trường khác là mặc định và nhấp vào **Create**.
+Tài nguyên `MalwareProtectionPlan` quét mọi file được tải lên QuarantineBucket:
 
-![create bucket](/images/5-Workshop/5.5-Policy/create-bucket.png)
+1. File đến prefix `quarantine/` qua Presigned URL.
+2. GuardDuty tự động quét file.
+3. GuardDuty gắn tag vào S3 object:
+   - `GuardDutyMalwareScanStatus: CLEAN` → an toàn để xử lý tiếp
+   - `GuardDutyMalwareScanStatus: THREAT_FOUND` → loại bỏ, ghi vào audit log
+4. Lambda `process-upload` đọc tag trước khi chuyển file.
 
-3. Tạo bucket thành công.
+Để xem kết quả quét:
+- Vào **GuardDuty → Malware Protection → Protected buckets**
+- Hoặc kiểm tra tag của S3 object trực tiếp trên Console
 
-![Success](/images/5-Workshop/5.5-Policy/create-bucket-success.png)
+#### 4. Cognito — Phân quyền theo vai trò
 
-Policy mặc định cho phép truy cập vào tất cả các S3 Buckets thông qua VPC endpoint.
+Ba nhóm người dùng quy định các mức quyền khác nhau trong backend:
 
-4. Trong giao diện **Edit Policy**, sao chép và dán theo policy sau, thay thế yourbucketname-2 với tên bucket thứ hai của bạn. Policy này sẽ cho phép truy cập đến bucket mới thông qua VPC endpoint, nhưng không cho phép truy cập đến các bucket còn lại. Chọn **Save** để kích hoạt policy.
+| Nhóm | Mức quyền truy cập |
+|---|---|
+| `EMPLOYEE` (ưu tiên 30) | Upload, xem và tải tài liệu của chính mình |
+| `DEPARTMENT_ADMIN` (ưu tiên 20) | Quản lý tài liệu của phòng ban, chia sẻ với người dùng |
+| `SYSTEM_ADMIN` (ưu tiên 10) | Toàn quyền — quản lý người dùng, xem analytics, truy cập mọi tài liệu |
 
+Thông tin nhóm được nhúng vào JWT token và được Lambda xác nhận ở runtime.
 
-```
-{
-  "Id": "Policy1631305502445",
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Sid": "Stmt1631305501021",
-      "Action": "s3:*",
-      "Effect": "Allow",
-      "Resource": [
-      				"arn:aws:s3:::yourbucketname-2",
-       				"arn:aws:s3:::yourbucketname-2/*"
-       ],
-      "Principal": "*"
-    }
-  ]
-}
-```
+#### 5. CloudWatch — Giám sát Log
 
-![custom policy](/images/5-Workshop/5.5-Policy/policy2.png)
+Tất cả 11 Lambda function ghi structured log vào CloudWatch Log Groups:
+- Lưu log: **2 tuần** cho dev, **3 tháng** cho production
+- X-Ray tracing bật trên tất cả Lambda function để theo dõi request end-to-end
 
-Cấu hình policy thành công.
+Để xem log:
+1. Vào **CloudWatch → Log Groups**
+2. Tìm `/aws/lambda/DmsStack-dev-<FunctionName>`
+3. Dùng **Insights** để query: `fields @timestamp, @message | sort @timestamp desc | limit 50`
 
-![success](/images/5-Workshop/5.5-Policy/success.png)
+#### 6. SNS — Cảnh báo Chi phí & Lỗi
 
-5. Từ session của bạn trên Test-Gateway-Endpoint instance, kiểm tra truy cập đến S3 bucket bạn tạo ở bước đầu
+CloudWatch Alarm kết nối với SNS topic và gửi email tới `alertEmail` khi:
+- Tỷ lệ lỗi Lambda vượt ngưỡng cho phép
+- Chi phí ước tính hàng tháng vượt ngân sách
 
-```
-aws s3 ls s3://<yourbucketname>
-```
-
-Câu lệnh trả về lỗi bởi vì truy cập vào S3 bucket không có quyền trong VPC endpoint policy.
-
-![error](/images/5-Workshop/5.5-Policy/error.png)
-
-6. Trở lại home directory của bạn trên EC2 instance ```cd~```
-
-+ Tạo file ```fallocate -l 1G test-bucket2.xyz ```
-+ Sao chép file lên bucket thứ  2 ```aws s3 cp test-bucket2.xyz s3://<your-2nd-bucket-name>```
-
-![success](/images/5-Workshop/5.5-Policy/test2.png)
-
-Thao tác này được cho phép bởi VPC endpoint policy.
-
-![success](/images/5-Workshop/5.5-Policy/test2-success.png)
-
-Sau đó chúng ta kiểm tra truy cập vào S3 bucket đầu tiên
-
- ```aws s3 cp test-bucket2.xyz s3://<your-1st-bucket-name>```
-
- ![fail](/images/5-Workshop/5.5-Policy/test2-fail.png)
-
- Câu lệnh xảy ra lỗi bởi vì bucket không có quyền truy cập bởi VPC endpoint policy.
-
-Trong phần này, bạn đã tạo chính sách VPC Endpoint cho Amazon S3 và sử dụng AWS CLI để kiểm tra chính sách. Các hoạt động AWS CLI liên quan đến bucket S3 ban đầu của bạn thất bại vì bạn áp dụng một chính sách chỉ cho phép truy cập đến bucket thứ hai mà bạn đã tạo. Các hoạt động AWS CLI nhắm vào bucket thứ hai của bạn thành công vì chính sách cho phép chúng. Những chính sách này có thể hữu ích trong các tình huống khi bạn cần kiểm soát quyền truy cập vào tài nguyên thông qua VPC Endpoint.
+Để xác minh cảnh báo đang hoạt động:
+1. Vào **SNS → Topics → DmsAlertTopic**
+2. Xác nhận subscription email của bạn là `Confirmed`
+3. Vào **CloudWatch → Alarms** để xem các alarm đang được định nghĩa

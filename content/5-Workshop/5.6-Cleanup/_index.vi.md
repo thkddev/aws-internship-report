@@ -1,37 +1,84 @@
 ---
-title : "Dọn dẹp tài nguyên"
-date : 2024-01-01
-weight : 6
-chapter : false
-pre : " <b> 5.6. </b> "
+title: "Dọn dẹp tài nguyên"
+date: 2026-07-03
+weight: 6
+chapter: false
+pre: " <b> 5.6. </b> "
 ---
 
-#### Dọn dẹp tài nguyên
+Khi hoàn thành workshop, hãy thực hiện các bước sau để xóa toàn bộ tài nguyên AWS và tránh phát sinh chi phí không cần thiết.
 
-Xin chúc mừng bạn đã hoàn thành xong lab này!
-Trong lab này, bạn đã học về các mô hình kiến trúc để truy cập Amazon S3 mà không sử dụng Public Internet.
+{{% notice warning %}}
+**Quan trọng:** Các bước dọn dẹp bên dưới sẽ xóa vĩnh viễn mọi dữ liệu bao gồm tài liệu đã tải lên, bản ghi DynamoDB và người dùng Cognito. Hãy đảm bảo bạn đã sao lưu những gì cần giữ lại trước khi tiến hành.
+{{% /notice %}}
 
-+ Bằng cách tạo Gateway endpoint, bạn đã cho phép giao tiếp trực tiếp giữa các tài nguyên EC2 và Amazon S3, mà không đi qua Internet Gateway.
-Bằng cách tạo Interface endpoint, bạn đã mở rộng kết nối S3 đến các tài nguyên chạy trên trung tâm dữ liệu trên chỗ của bạn thông qua AWS Site-to-Site VPN hoặc Direct Connect.
+#### 1. Xóa CDK Stack
 
-#### Dọn dẹp
-1. Điều hướng đến Hosted Zones trên phía trái của bảng điều khiển Route 53. Nhấp vào tên của  s3.us-east-1.amazonaws.com zone. Nhấp vào Delete và xác nhận việc xóa bằng cách nhập từ khóa "delete".
+Chạy lệnh sau từ thư mục `aws/infrastructure`:
 
-![hosted zone](/images/5-Workshop/5.6-Cleanup/delete-zone.png)
+```bash
+cd aws/infrastructure
+npx cdk destroy -c environment=dev
+```
 
-2. Disassociate Route 53 Resolver Rule - myS3Rule from "VPC Onprem" and Delete it. 
+CDK sẽ hỏi xác nhận:
+```
+Are you sure you want to delete: DmsStack-dev (y/n)? y
+```
 
-![hosted zone](/images/5-Workshop/5.6-Cleanup/vpc.png)
+Lệnh này sẽ tự động xóa:
+- Cả 3 S3 bucket (FrontendBucket, QuarantineBucket, DocumentsBucket) và toàn bộ nội dung bên trong
+- Bảng DynamoDB `dms-dev` và toàn bộ dữ liệu
+- Tất cả 11 Lambda function và CloudWatch Log Group của chúng
+- REST API trên API Gateway
+- Cognito User Pool và tất cả người dùng
+- SQS queue (UploadQueue và DeadLetterQueue)
+- CloudFront distribution
+- SNS topic và các email subscription
+- GuardDuty Malware Protection Plan và IAM role
 
-4.Mở console của CloudFormation và xóa hai stack CloudFormation mà bạn đã tạo cho bài thực hành này:
-+ PLOnpremSetup
-+ PLCloudSetup
+{{% notice warning %}}
+Ở môi trường `production`, S3 bucket và DynamoDB table sử dụng `RemovalPolicy.RETAIN` để tránh mất dữ liệu ngoài ý muốn. Bạn sẽ cần xóa thủ công những tài nguyên đó trên AWS Console nếu muốn.
+{{% /notice %}}
 
-![delete stack](/images/5-Workshop/5.6-Cleanup/delete-stack.png)
+#### 2. Xác minh việc xóa trên AWS Console
 
-5. Xóa các S3 bucket
+Sau khi lệnh destroy hoàn thành, kiểm tra lại để đảm bảo tài nguyên đã bị xóa:
 
-+ Mở bảng điều khiển S3
-+ Chọn bucket chúng ta đã tạo cho lab, nhấp chuột và xác nhận là empty. Nhấp Delete và xác nhận delete.
-+ 
-![delete s3](/images/5-Workshop/5.6-Cleanup/delete-s3.png)
+1. **CloudFormation** → xác nhận stack `DmsStack-dev` không còn tồn tại
+2. **S3** → xác nhận 3 bucket DMS đã biến mất
+3. **DynamoDB** → xác nhận bảng `dms-dev` đã bị xóa
+4. **Lambda** → xác nhận các function DMS đã được gỡ bỏ
+5. **Cognito** → xác nhận user pool `dms-dev` đã bị xóa
+
+#### 3. Xóa CDK Bootstrap (Tùy chọn)
+
+Nếu bạn muốn dọn dẹp hoàn toàn và xóa cả CDK bootstrap stack:
+
+```bash
+aws cloudformation delete-stack --stack-name CDKToolkit
+```
+
+{{% notice warning %}}
+Chỉ thực hiện bước này nếu bạn không dùng CDK cho bất kỳ dự án nào khác trong tài khoản AWS và vùng (region) này.
+{{% /notice %}}
+
+#### 4. Kiểm tra các khoản phí còn lại
+
+Sau khi dọn dẹp, xác minh trong **AWS Billing → Cost Explorer** rằng không có khoản phí liên quan đến DMS xuất hiện trong chu kỳ thanh toán tiếp theo. Các mục thường cần kiểm tra:
+- Phí lưu trữ S3
+- Đơn vị đọc/ghi DynamoDB
+- Số lần gọi Lambda
+- Lưu trữ log CloudWatch
+- Phí quét GuardDuty
+
+#### Tổng kết
+
+Xin chúc mừng bạn đã hoàn thành DMS Workshop! Bạn đã thực hiện thành công:
+
+- Triển khai một hệ thống Document Management System hoàn toàn serverless trên AWS bằng CDK
+- Cấu hình phân quyền theo vai trò với Amazon Cognito
+- Xây dựng pipeline upload bảo mật với S3 Presigned URL và quét malware bằng GuardDuty
+- Thiết kế DynamoDB single-table với 4 GSI để query hiệu quả
+- Thiết lập CloudWatch logging, X-Ray tracing và cảnh báo chi phí qua SNS
+- Xác minh toàn bộ luồng upload, quét và tải xuống tài liệu hoạt động đúng

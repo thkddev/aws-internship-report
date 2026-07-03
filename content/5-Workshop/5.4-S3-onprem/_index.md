@@ -1,20 +1,115 @@
 ---
-title : "Access S3 from on-premises"
-date : 2024-01-01
-weight : 4
-chapter : false
-pre : " <b> 5.4. </b> "
+title: "Configure Backend & Test APIs"
+date: 2026-07-03
+weight: 4
+chapter: false
+pre: " <b> 5.4. </b> "
 ---
 
-#### Overview
+After the infrastructure is deployed, this step walks through creating the first user, uploading a document, and verifying the full end-to-end flow.
 
-+ In this section, you will create an Interface endpoint to access Amazon S3 from a simulated on-premises environment. The Interface endpoint will allow you to route to Amazon S3 over a VPN connection from your simulated on-premises environment.
+#### 1. Create the First Admin User
 
-+ Why using **Interface endpoint**: 
-    + Gateway endpoints only work with resources running in the VPC where they are created. Interface endpoints work with resources running in VPC, and also resources running in on-premises environments. Connectivty from your on-premises environment to the cloud can be provided by AWS Site-to-Site VPN or AWS Direct Connect.
-    + Interface endpoints allow you to connect to services powered by AWS PrivateLink. These services include some AWS services, services hosted by other AWS customers and partners in their own VPCs (referred to as PrivateLink Endpoint Services), and supported AWS Marketplace Partner services. For this workshop, we will focus on connecting to Amazon S3.
+Since `selfSignUpEnabled: false`, all users must be created by an administrator.
 
-![Interface endpoint architecture](/images/5-Workshop/5.4-S3-onprem/diagram3.png)
+Go to **AWS Console → Cognito → User Pools → `dms-dev` → Users → Create user**:
+- **Email**: `admin@yourcompany.com`
+- **Temporary password**: Set a strong one (will be changed on first login)
+- After creation, go to **Groups** tab and add the user to `SYSTEM_ADMIN`
 
+Or use the AWS CLI:
+```bash
+aws cognito-idp admin-create-user \
+  --user-pool-id <UserPoolId> \
+  --username admin@yourcompany.com \
+  --temporary-password "Temp@12345!" \
+  --user-attributes Name=email,Value=admin@yourcompany.com Name=email_verified,Value=true Name=name,Value="Admin User"
 
+aws cognito-idp admin-add-user-to-group \
+  --user-pool-id <UserPoolId> \
+  --username admin@yourcompany.com \
+  --group-name SYSTEM_ADMIN
+```
 
+#### 2. Authenticate and Get JWT Token
+
+Use the Cognito `USER_PASSWORD_AUTH` flow to get an access token:
+
+```bash
+aws cognito-idp initiate-auth \
+  --auth-flow USER_PASSWORD_AUTH \
+  --client-id <UserPoolClientId> \
+  --auth-parameters USERNAME=admin@yourcompany.com,PASSWORD="YourNewPassword"
+```
+
+Copy the `AccessToken` from the response. You will use this as a Bearer token in all API calls.
+
+#### 3. Test the `/me` Endpoint
+
+```bash
+curl -H "Authorization: Bearer <AccessToken>" \
+  https://<ApiUrl>/me
+```
+
+Expected response:
+```json
+{
+  "userId": "...",
+  "email": "admin@yourcompany.com",
+  "name": "Admin User",
+  "groups": ["SYSTEM_ADMIN"]
+}
+```
+
+#### 4. Upload a Document (Full Flow)
+
+**Step 4a — Request a Presigned Upload URL:**
+```bash
+curl -X POST \
+  -H "Authorization: Bearer <AccessToken>" \
+  -H "Content-Type: application/json" \
+  -d '{"filename": "report.pdf", "contentType": "application/pdf", "size": 102400}' \
+  https://<ApiUrl>/upload-intents
+```
+
+Response includes:
+```json
+{
+  "uploadIntentId": "ui-xxxx",
+  "presignedUrl": "https://s3.amazonaws.com/quarantine-bucket/quarantine/...",
+  "expiresAt": "2026-07-03T14:00:00Z"
+}
+```
+
+**Step 4b — Upload directly to S3 using the Presigned URL:**
+```bash
+curl -X PUT \
+  -H "Content-Type: application/pdf" \
+  --data-binary @report.pdf \
+  "<presignedUrl>"
+```
+
+**Step 4c — Verify the pipeline ran automatically:**
+1. Go to **S3 → QuarantineBucket** → verify the file appeared
+2. Go to **GuardDuty → Malware Protection** → verify the scan ran and tagged the file
+3. Go to **S3 → DocumentsBucket** → the clean file should appear here after ~30 seconds
+4. Go to **DynamoDB → `dms-dev`** → check for a new `DOC#...` record
+
+#### 5. List Documents
+
+```bash
+curl -H "Authorization: Bearer <AccessToken>" \
+  https://<ApiUrl>/documents
+```
+
+You should see the uploaded document in the response with its `documentId`, `filename`, `versionNumber`, and timestamps.
+
+#### 6. Run the Frontend Locally
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Open `http://localhost:5173` in your browser. Enter the `UserPoolId`, `UserPoolClientId`, and `ApiUrl` from the CDK outputs to configure the app, then log in with your admin credentials.
