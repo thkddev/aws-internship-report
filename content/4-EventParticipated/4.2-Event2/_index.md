@@ -1,126 +1,100 @@
 ---
-title: "Event 2"
-date: 2024-01-01
-weight: 1
+title: "Event 2 — FCAJ Community Day (June)"
+date: 2026-07-03
+weight: 2
 chapter: false
 pre: " <b> 4.2. </b> "
 ---
 
-{{% notice warning %}}
-⚠️ **Note:** The information below is for reference purposes only. Please **do not copy it verbatim** into your report, including this warning.
-{{% /notice %}}
+# Summary Report: FCAJ Community Day — June Edition
 
-# Summary Report: “GenAI-powered App-DB Modernization workshop”
+### Event Information
 
-### Event Objectives
+&emsp;**Event Name:** FCAJ Community Day
 
-- Share best practices in modern application design
-- Introduce Domain-Driven Design (DDD) and event-driven architecture
-- Provide guidance on selecting the right compute services
-- Present AI tools to support the development lifecycle
+&emsp;**Date & Time:** 9:00 AM – 12:00 PM, Saturday, June 27, 2026
 
-### Speakers
+&emsp;**Location:** Bitexco Financial Tower, Amazon Q Conference Room (Floor 26), 2 Hai Trieu Street, Sai Gon Ward, Ho Chi Minh City
 
-- **Jignesh Shah** – Director, Open Source Databases
-- **Erica Liu** – Sr. GTM Specialist, AppMod
-- **Fabrianne Effendi** – Assc. Specialist SA, Serverless Amazon Web Services
+&emsp;**Ticket:** Amazon Q Conference Room (26F)
 
-### Key Highlights
+&emsp;**Role:** Attendee
 
-#### Identifying the drawbacks of legacy application architecture
+---
 
-- Long product release cycles → Lost revenue/missed opportunities  
-- Inefficient operations → Reduced productivity, higher costs  
-- Non-compliance with security regulations → Security breaches, loss of reputation  
+### Event Schedule
 
-#### Transitioning to modern application architecture – Microservices
+| Time | Session | Speaker |
+|---|---|---|
+| 8:30 – 9:00 AM | Settle into your seat | — |
+| 9:00 – 9:25 AM | Deep Response Engine: From Detection to Autonomous Resolution | — |
+| 9:25 – 9:55 AM | Voice Agents: Building Human-Like AI Conversations at Scale | — |
+| 9:55 – 10:20 AM | AWS DevOps Agent: Your Always-Available Operations Teammate | — |
+| 10:20 – 10:45 AM | AI-Powered Productivity: Workforce Planning For Enterprise | — |
+| 10:45 – 11:30 AM | Building Secure Private MCP Connection with Amazon Q | — |
 
-Migrating to a modular system — each function is an **independent service** communicating via **events**, built on three core pillars:
+---
 
-- **Queue Management**: Handle asynchronous tasks  
-- **Caching Strategy**: Optimize performance  
-- **Message Handling**: Flexible inter-service communication  
+### Session Highlights
 
-#### Domain-Driven Design (DDD)
+#### Deep Response Engine: From Detection to Autonomous Resolution
+- The complexity wall in modern cloud operations
+- Shift from alert-driven to action-driven systems
+- Deep Response Engine architecture overview
+- Live demo of autonomous incident response
+- Business impact: cost reduction and zero-downtime operations
 
-- **Four-step method**: Identify domain events → arrange timeline → identify actors → define bounded contexts  
-- **Bookstore case study**: Demonstrates real-world DDD application  
-- **Context mapping**: 7 patterns for integrating bounded contexts  
+#### Voice Agents: Building Human-Like AI Conversations at Scale
+- Evolution from IVR and chatbots to AI voice agents
+- Key challenges: latency, accuracy, and natural interaction
+- Amazon Nova Sonic and speech-to-speech foundation model
+- Architecture: telephony, streaming, Bedrock, MCP tools
+- Enterprise use cases, best practices, and live demo
 
-#### Event-Driven Architecture
+#### AWS DevOps Agent: Your Always-Available Operations Teammate
+- Overview of AWS DevOps Agent
+- Reducing MTTD and MTTR with AI-driven operations
+- Supporting multi-cloud and hybrid environments
+- Bedrock AgentCore and multi-agent reasoning approach
+- Real-world use cases and ECS demo walkthrough
 
-- **3 integration patterns**: Publish/Subscribe, Point-to-point, Streaming  
-- **Benefits**: Loose coupling, scalability, resilience  
-- **Sync vs async comparison**: Understanding the trade-offs  
+#### AI-Powered Productivity: Workforce Planning For Enterprise
+- HR transformation challenges in modern enterprises
+- Overview of Amazon Q and its HR capabilities
+- Accelerating HR operations with automation
+- Workforce analytics and data-driven insights
+- Strategic workforce planning for enterprise decision-making
 
-#### Compute Evolution
+#### Building Secure Private MCP Connection with Amazon Q
+- Introduction to Amazon Q as an AI assistant platform
+- MCP (Model Context Protocol) and its role in extensibility
+- Security challenges in MCP-based integrations
+- Configuring Amazon Q VPC private connectivity
+- Demo and real-world implementation insights
 
-- **Shared Responsibility Model**: EC2 → ECS → Fargate → Lambda  
-- **Serverless benefits**: No server management, auto-scaling, pay-for-value  
-- **Functions vs Containers**: Criteria for appropriate choice  
-
-#### Amazon Q Developer
-
-- **SDLC automation**: From planning to maintenance  
-- **Code transformation**: Java upgrade, .NET modernization  
-- **AWS Transform agents**: VMware, Mainframe, .NET migration  
+---
 
 ### Key Takeaways
 
-#### Design Mindset
+- **From reactive to autonomous**: The Deep Response Engine session challenged my mental model of cloud operations — instead of just detecting and alerting, modern systems are moving toward autonomous remediation. This is directly relevant to the DMS project where proactive monitoring and self-healing would reduce operational toil.
+- **Voice AI is maturing fast**: Amazon Nova Sonic's speech-to-speech architecture removes the traditional ASR → NLU → TTS pipeline latency. For enterprise use cases like customer service, this reduces interaction friction significantly.
+- **AI-driven DevOps reduces MTTD/MTTR**: The AWS DevOps Agent session showed how AI can continuously monitor systems across multi-cloud environments and suggest or even execute fixes — a game changer for on-call operations.
+- **Amazon Q for HR**: Seeing AI applied to workforce planning (not just software development) was eye-opening. The session demonstrated that the same LLM-powered assistant approach generalizes across business domains.
+- **MCP security matters**: The private MCP connection session highlighted that as AI assistants gain access to more data and tools via MCP, securing those connections (VPC private connectivity, authentication, scoping) becomes critical — especially in enterprise environments.
 
-- **Business-first approach**: Always start from the business domain, not the technology  
-- **Ubiquitous language**: Importance of a shared vocabulary between business and tech teams  
-- **Bounded contexts**: Identifying and managing complexity in large systems  
+### Personal Experience
 
-#### Technical Architecture
+The June edition of FCAJ Community Day felt even more focused than the May event — all five sessions revolved around **agentic AI and AI operations**, which gave the day a very coherent theme.
 
-- **Event storming technique**: Practical method for modeling business processes  
-- Use **event-driven communication** instead of synchronous calls  
-- **Integration patterns**: When to use sync, async, pub/sub, streaming  
-- **Compute spectrum**: Criteria for choosing between VM, containers, and serverless  
+What stood out for me was the progression from individual AI tools to **multi-agent systems**: the Deep Response Engine, AWS DevOps Agent, and MCP sessions all pointed in the same direction — AI is moving from assistive to autonomous, and the infrastructure to support that (Bedrock AgentCore, MCP, VPC connectivity) is maturing rapidly.
 
-#### Modernization Strategy
+Being in the **Amazon Q Conference Room** named after the product itself added an interesting touch to the experience. The sessions were technical and demo-heavy, which I appreciated as someone actively building with AWS.
 
-- **Phased approach**: No rushing — follow a clear roadmap  
-- **7Rs framework**: Multiple modernization paths depending on the application  
-- **ROI measurement**: Cost reduction + business agility  
+Overall, this event reinforced that the skills I am developing during this internship — serverless architecture, IAM, Lambda, DynamoDB — are the exact building blocks that agentic AI systems are built on top of.
 
-### Applying to Work
+#### Event Photos
 
-- **Apply DDD** to current projects: Event storming sessions with business teams  
-- **Refactor microservices**: Use bounded contexts to define service boundaries  
-- **Implement event-driven patterns**: Replace some sync calls with async messaging  
-- **Adopt serverless**: Pilot AWS Lambda for suitable use cases  
-- **Try Amazon Q Developer**: Integrate into the dev workflow to boost productivity  
+![Event Photo 1](../../images/event2-1.png)
 
-### Event Experience
+![Event Photo 2](../../images/event2-2.png)
 
-Attending the **“GenAI-powered App-DB Modernization”** workshop was extremely valuable, giving me a comprehensive view of modernizing applications and databases using advanced methods and tools. Key experiences included:
-
-#### Learning from highly skilled speakers
-- Experts from AWS and major tech organizations shared **best practices** in modern application design.  
-- Through real-world case studies, I gained a deeper understanding of applying **DDD** and **Event-Driven Architecture** to large projects.  
-
-#### Hands-on technical exposure
-- Participating in **event storming** sessions helped me visualize how to **model business processes** into domain events.  
-- Learned how to **split microservices** and define **bounded contexts** to manage large-system complexity.  
-- Understood trade-offs between **synchronous and asynchronous communication** and integration patterns like **pub/sub, point-to-point, streaming**.  
-
-#### Leveraging modern tools
-- Explored **Amazon Q Developer**, an AI tool for SDLC support from planning to maintenance.  
-- Learned to **automate code transformation** and pilot serverless with **AWS Lambda** to improve productivity.  
-
-#### Networking and discussions
-- The workshop offered opportunities to exchange ideas with experts, peers, and business teams, enhancing the **ubiquitous language** between business and tech.  
-- Real-world examples reinforced the importance of the **business-first approach** rather than focusing solely on technology.  
-
-#### Lessons learned
-- Applying DDD and event-driven patterns reduces **coupling** while improving **scalability** and **resilience**.  
-- Modernization requires a **phased approach** with **ROI measurement**; rushing the process can be risky.  
-- AI tools like Amazon Q Developer can significantly **boost productivity** when integrated into the current workflow.  
-
-#### Some event photos
-*Add your event photos here*  
-
-> Overall, the event not only provided technical knowledge but also helped me reshape my thinking about application design, system modernization, and cross-team collaboration.
