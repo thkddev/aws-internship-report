@@ -12,11 +12,11 @@ pre: " <b> 1.5. </b> "
 ### Các công việc cần triển khai trong tuần này:
 | Thứ | Công việc | Ngày bắt đầu | Ngày hoàn thành | Nguồn tài liệu |
 | --- | --------- | ------------ | --------------- | -------------- |
-| 2 | - Tìm hiểu AWS Security Standards và AWS Security Hub - Enable Security Hub và xem Security Score | 18/05/2026 | 18/05/2026 | |
-| 3 | - Tìm hiểu AWS Tagging - Tạo tag cho EC2 Instance và lọc resource theo tag trên AWS Console | 19/05/2026 | 19/05/2026 | |
-| 4 | - Tìm hiểu Resource Groups - Tạo Resource Group dựa trên tag và quản lý tài nguyên theo nhóm | 20/05/2026 | 20/05/2026 | |
-| 5 | - Tạo IAM User và IAM Policy - Kiểm tra cơ chế cấp quyền và nguyên tắc least privilege | 21/05/2026 | 21/05/2026 | |
-| 6 | - Tạo IAM Role cho Lambda - Tạo Lambda Function xử lý resource tagging và test kết quả | 22/05/2026 | 22/05/2026 | |
+| 2 | - Tìm hiểu AWS Security Standards và AWS Security Hub - Enable Security Hub và xem Security Score | 18/05/2026 | 18/05/2026 | [000018.awsstudygroup.com](https://000018.awsstudygroup.com/) |
+| 3 | - Tìm hiểu AWS Tagging - Tạo tag cho EC2 Instance và lọc resource theo tag trên AWS Console | 19/05/2026 | 19/05/2026 | [000022.awsstudygroup.com](https://000022.awsstudygroup.com/) |
+| 4 | - Tìm hiểu Resource Groups - Tạo Resource Group dựa trên tag và quản lý tài nguyên theo nhóm | 20/05/2026 | 20/05/2026 | [000027.awsstudygroup.com](https://000027.awsstudygroup.com/) |
+| 5 | - Tạo IAM User và IAM Policy - Kiểm tra cơ chế cấp quyền và nguyên tắc least privilege | 21/05/2026 | 21/05/2026 | [000028.awsstudygroup.com](https://000028.awsstudygroup.com/) |
+| 6 | - Tạo IAM Role cho Lambda - Tạo Lambda Function xử lý resource tagging và test kết quả | 22/05/2026 | 22/05/2026 | [000030.awsstudygroup.com](https://000030.awsstudygroup.com/) |
 
 ### Kết quả đạt được tuần 5:
 * Nâng cao nhận thức về bảo mật đám mây và áp dụng các tiêu chuẩn bảo mật chuẩn ngành thông qua việc kích hoạt AWS Security Hub.

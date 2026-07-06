@@ -13,11 +13,11 @@ pre: " <b> 1.3. </b> "
 ### Các công việc cần triển khai trong tuần này:
 | Thứ | Công việc | Ngày bắt đầu | Ngày hoàn thành | Nguồn tài liệu |
 | --- | --------- | ------------ | --------------- | -------------- |
-| 2 | - Tìm hiểu AWS Backup - Tạo S3 bucket phục vụ lab và chuẩn bị resource cần backup | 04/05/2026 | 04/05/2026 | |
-| 3 | - Tạo Backup Plan - Cấu hình backup rule, lifecycle, resource assignment và thông báo SNS | 05/05/2026 | 05/05/2026 | |
+| 2 | - Tìm hiểu AWS Backup - Tạo S3 bucket phục vụ lab và chuẩn bị resource cần backup | 04/05/2026 | 04/05/2026 | [000013.awsstudygroup.com](https://000013.awsstudygroup.com/) |
+| 3 | - Tạo Backup Plan - Cấu hình backup rule, lifecycle, resource assignment và thông báo SNS | 05/05/2026 | 05/05/2026 | [000013.awsstudygroup.com](https://000013.awsstudygroup.com/) |
 | 4 | - Thực hiện restore dữ liệu từ Backup Vault - Kiểm tra trạng thái và đánh giá kết quả restore | 06/05/2026 | 06/05/2026 | |
-| 5 | - Tìm hiểu AWS Storage Gateway - Tạo Storage Gateway instance và kết nối gateway với AWS | 07/05/2026 | 07/05/2026 | |
-| 6 | - Tạo File Gateway và mount storage - Tạo static website trên Amazon S3 để kiểm tra lưu trữ | 08/05/2026 | 08/05/2026 | |
+| 5 | - Tìm hiểu AWS Storage Gateway - Tạo Storage Gateway instance và kết nối gateway với AWS | 07/05/2026 | 07/05/2026 | [000024.awsstudygroup.com](https://000024.awsstudygroup.com/) |
+| 6 | - Tạo File Gateway và mount storage - Tạo static website trên Amazon S3 để kiểm tra lưu trữ | 08/05/2026 | 08/05/2026 | [000057.awsstudygroup.com](https://000057.awsstudygroup.com/) |
 
 ### Kết quả đạt được tuần 3:
 * Nắm được tổng quan về các phương pháp sao lưu và phục hồi dữ liệu cấp doanh nghiệp bằng dịch vụ AWS Backup.

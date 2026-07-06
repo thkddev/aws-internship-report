@@ -13,11 +13,11 @@ pre: " <b> 1.7. </b> "
 ### Các công việc cần triển khai trong tuần này:
 | Thứ | Công việc | Ngày bắt đầu | Ngày hoàn thành | Nguồn tài liệu |
 | --- | --------- | ------------ | --------------- | -------------- |
-| 2 | - Tìm hiểu tổng quan Amazon DynamoDB - Table, Item, Attribute, Primary Key và Secondary Index | 01/06/2026 | 01/06/2026 | |
-| 3 | - Thực hành tạo bảng DynamoDB - Thực hiện Create, Read, Update, Query và tạo Global Secondary Index | 02/06/2026 | 02/06/2026 | |
-| 4 | - Cấu hình AWS CLI và AWS SDK cho DynamoDB - Thao tác dữ liệu bằng Python SDK (Boto3) | 03/06/2026 | 03/06/2026 | |
-| 5 | - Xây dựng dữ liệu phục vụ Cost & Usage Analysis - Phân tích chi phí, usage và tagging | 04/06/2026 | 04/06/2026 | |
-| 6 | - Tìm hiểu DynamoDB Zero-ETL - Kết nối OpenSearch Service và Amazon Bedrock để tìm kiếm dữ liệu bằng AI | 05/06/2026 | 05/06/2026 | |
+| 2 | - Tìm hiểu tổng quan Amazon DynamoDB - Table, Item, Attribute, Primary Key và Secondary Index | 01/06/2026 | 01/06/2026 | [000060.awsstudygroup.com](https://000060.awsstudygroup.com/) |
+| 3 | - Thực hành tạo bảng DynamoDB - Thực hiện Create, Read, Update, Query và tạo Global Secondary Index | 02/06/2026 | 02/06/2026 | [000060.awsstudygroup.com](https://000060.awsstudygroup.com/) |
+| 4 | - Cấu hình AWS CLI và AWS SDK cho DynamoDB - Thao tác dữ liệu bằng Python SDK (Boto3) | 03/06/2026 | 03/06/2026 | [000011.awsstudygroup.com](https://000011.awsstudygroup.com/), [000039.awsstudygroup.com](https://000039.awsstudygroup.com/) |
+| 5 | - Xây dựng dữ liệu phục vụ Cost & Usage Analysis - Phân tích chi phí, usage và tagging | 04/06/2026 | 04/06/2026 | [000064.awsstudygroup.com](https://000064.awsstudygroup.com/) |
+| 6 | - Tìm hiểu DynamoDB Zero-ETL - Kết nối OpenSearch Service và Amazon Bedrock để tìm kiếm dữ liệu bằng AI | 05/06/2026 | 05/06/2026 | [000039.awsstudygroup.com](https://000039.awsstudygroup.com/) |
 
 ### Kết quả đạt được tuần 7:
 * Chuyển đổi tư duy từ cơ sở dữ liệu quan hệ sang NoSQL thông qua việc làm quen với kiến trúc linh hoạt của Amazon DynamoDB.

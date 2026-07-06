@@ -13,11 +13,11 @@ pre: " <b> 1.6. </b> "
 ### Tasks to be carried out this week:
 | Day | Task | Start Date | Completion Date | Reference Material |
 | --- | ---- | ---------- | --------------- | ------------------ |
-| 2 | - Learn 3-Tier application architecture on AWS - VPC, Subnets, Security Groups, and Database Security Group | 25/05/2026 | 25/05/2026 | |
-| 3 | - Create EC2 instance for Application Server - Create DB Subnet Group and deploy Amazon RDS | 26/05/2026 | 26/05/2026 | |
-| 4 | - Deploy application to EC2 - Test connectivity between EC2 and RDS, perform data backup | 27/05/2026 | 27/05/2026 | |
-| 5 | - Learn data ingest and store processes - Create S3 Bucket, IAM Role, and Kinesis Data Firehose | 28/05/2026 | 28/05/2026 | |
-| 6 | - Create AWS Glue Crawler and Data Catalog - Test Data Lake, transform data, and visualize data | 29/05/2026 | 29/05/2026 | |
+| 2 | - Learn 3-Tier application architecture on AWS - VPC, Subnets, Security Groups, and Database Security Group | 25/05/2026 | 25/05/2026 | [000005.awsstudygroup.com](https://000005.awsstudygroup.com/) |
+| 3 | - Create EC2 instance for Application Server - Create DB Subnet Group and deploy Amazon RDS | 26/05/2026 | 26/05/2026 | [000005.awsstudygroup.com](https://000005.awsstudygroup.com/) |
+| 4 | - Deploy application to EC2 - Test connectivity between EC2 and RDS, perform data backup | 27/05/2026 | 27/05/2026 | [000005.awsstudygroup.com](https://000005.awsstudygroup.com/) |
+| 5 | - Learn data ingest and store processes - Create S3 Bucket, IAM Role, and Kinesis Data Firehose | 28/05/2026 | 28/05/2026 | [000035.awsstudygroup.com](https://000035.awsstudygroup.com/) |
+| 6 | - Create AWS Glue Crawler and Data Catalog - Test Data Lake, transform data, and visualize data | 29/05/2026 | 29/05/2026 | [000040.awsstudygroup.com](https://000040.awsstudygroup.com/) |
 
 ### Week 6 Achievements:
 * Deeply understood and hands-on deployed the classic highly secure 3-Tier web application architecture on AWS (VPC, Subnets, Security Groups).

@@ -13,11 +13,11 @@ pre: " <b> 1.7. </b> "
 ### Tasks to be carried out this week:
 | Day | Task | Start Date | Completion Date | Reference Material |
 | --- | ---- | ---------- | --------------- | ------------------ |
-| 2 | - Overview of Amazon DynamoDB - Tables, Items, Attributes, Primary Keys, and Secondary Indexes | 01/06/2026 | 01/06/2026 | |
-| 3 | - Practice creating DynamoDB tables - Perform Create, Read, Update, Query operations and create a Global Secondary Index | 02/06/2026 | 02/06/2026 | |
-| 4 | - Configure AWS CLI and AWS SDK for DynamoDB - Manipulate data using Python SDK (Boto3) | 03/06/2026 | 03/06/2026 | |
-| 5 | - Build data for Cost & Usage Analysis - Analyze costs, usage, and tagging | 04/06/2026 | 04/06/2026 | |
-| 6 | - Learn DynamoDB Zero-ETL - Connect OpenSearch Service and Amazon Bedrock for AI-powered search | 05/06/2026 | 05/06/2026 | |
+| 2 | - Overview of Amazon DynamoDB - Tables, Items, Attributes, Primary Keys, and Secondary Indexes | 01/06/2026 | 01/06/2026 | [000060.awsstudygroup.com](https://000060.awsstudygroup.com/) |
+| 3 | - Practice creating DynamoDB tables - Perform Create, Read, Update, Query operations and create a Global Secondary Index | 02/06/2026 | 02/06/2026 | [000060.awsstudygroup.com](https://000060.awsstudygroup.com/) |
+| 4 | - Configure AWS CLI and AWS SDK for DynamoDB - Manipulate data using Python SDK (Boto3) | 03/06/2026 | 03/06/2026 | [000011.awsstudygroup.com](https://000011.awsstudygroup.com/), [000039.awsstudygroup.com](https://000039.awsstudygroup.com/) |
+| 5 | - Build data for Cost & Usage Analysis - Analyze costs, usage, and tagging | 04/06/2026 | 04/06/2026 | [000064.awsstudygroup.com](https://000064.awsstudygroup.com/) |
+| 6 | - Learn DynamoDB Zero-ETL - Connect OpenSearch Service and Amazon Bedrock for AI-powered search | 05/06/2026 | 05/06/2026 | [000039.awsstudygroup.com](https://000039.awsstudygroup.com/) |
 
 ### Week 7 Achievements:
 * Transitioned mindset from relational databases to NoSQL by familiarizing with the flexible architecture of Amazon DynamoDB.
