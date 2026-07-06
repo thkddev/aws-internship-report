@@ -101,7 +101,7 @@ Nhìn chung, sự kiện này củng cố thêm động lực để mình tiếp
 
 #### Hình ảnh sự kiện
 
-![Hình ảnh sự kiện 1](../../images/event1-1.png)
+![Hình ảnh sự kiện 1](../../../images/event1-1.png)
 
-![Hình ảnh sự kiện 2](../../images/event1-2.png)
+![Hình ảnh sự kiện 2](../../../images/event1-2.png)
 

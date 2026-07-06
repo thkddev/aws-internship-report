@@ -8,9 +8,6 @@ pre: " <b> 5.6. </b> "
 
 Khi hoàn thành workshop, hãy thực hiện các bước sau để xóa toàn bộ tài nguyên AWS và tránh phát sinh chi phí không cần thiết.
 
-{{% notice warning %}}
-**Quan trọng:** Các bước dọn dẹp bên dưới sẽ xóa vĩnh viễn mọi dữ liệu bao gồm tài liệu đã tải lên, bản ghi DynamoDB và người dùng Cognito. Hãy đảm bảo bạn đã sao lưu những gì cần giữ lại trước khi tiến hành.
-{{% /notice %}}
 
 #### 1. Xóa CDK Stack
 
@@ -37,9 +34,6 @@ Lệnh này sẽ tự động xóa:
 - SNS topic và các email subscription
 - GuardDuty Malware Protection Plan và IAM role
 
-{{% notice warning %}}
-Ở môi trường `production`, S3 bucket và DynamoDB table sử dụng `RemovalPolicy.RETAIN` để tránh mất dữ liệu ngoài ý muốn. Bạn sẽ cần xóa thủ công những tài nguyên đó trên AWS Console nếu muốn.
-{{% /notice %}}
 
 #### 2. Xác minh việc xóa trên AWS Console
 
@@ -59,9 +53,6 @@ Nếu bạn muốn dọn dẹp hoàn toàn và xóa cả CDK bootstrap stack:
 aws cloudformation delete-stack --stack-name CDKToolkit
 ```
 
-{{% notice warning %}}
-Chỉ thực hiện bước này nếu bạn không dùng CDK cho bất kỳ dự án nào khác trong tài khoản AWS và vùng (region) này.
-{{% /notice %}}
 
 #### 4. Kiểm tra các khoản phí còn lại
 

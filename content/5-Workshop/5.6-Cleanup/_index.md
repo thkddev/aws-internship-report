@@ -8,9 +8,6 @@ pre: " <b> 5.6. </b> "
 
 When you are done with the workshop, follow these steps to delete all AWS resources and avoid ongoing charges.
 
-{{% notice warning %}}
-**Important:** The cleanup steps below will permanently delete all data including uploaded documents, DynamoDB records, and Cognito users. Make sure you have backed up anything you need before proceeding.
-{{% /notice %}}
 
 #### 1. Destroy the CDK Stack
 
@@ -37,9 +34,6 @@ This command will automatically delete:
 - SNS topic and email subscriptions
 - GuardDuty Malware Protection Plan and IAM role
 
-{{% notice warning %}}
-In `production` environment, S3 buckets and DynamoDB table use `RemovalPolicy.RETAIN` to prevent accidental data loss. You would need to delete those manually from the AWS Console if desired.
-{{% /notice %}}
 
 #### 2. Verify Deletion in AWS Console
 
@@ -59,9 +53,6 @@ If you want to fully clean up and remove the CDK bootstrap stack as well:
 aws cloudformation delete-stack --stack-name CDKToolkit
 ```
 
-{{% notice warning %}}
-Only do this if you are not using CDK for any other projects in this AWS account and region.
-{{% /notice %}}
 
 #### 4. Check for Remaining Charges
 

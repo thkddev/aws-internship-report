@@ -12,7 +12,7 @@ Trong môi trường AWS multi-account, việc theo dõi chi phí luôn là mộ
 
 Trong quá trình tìm hiểu về cost management và automation trên AWS, mình đọc được một bài blog chia sẻ cách tự động gửi báo cáo chi phí delta hằng ngày trong môi trường multi-account. Mình thấy giải pháp này khá thực tế vì vừa giúp tăng khả năng “cost visibility”, vừa giảm đáng kể các thao tác thủ công trong quá trình quản lý chi phí cloud.
 
-![Delta Cost Report Architecture](../../images/cost-report-architecture.png)
+![Delta Cost Report Architecture](../../../images/cost-report-architecture.png)
 
 ## Vấn đề thường gặp
 

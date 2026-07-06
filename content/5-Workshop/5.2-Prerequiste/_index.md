@@ -92,7 +92,3 @@ DMS/
 ├── contracts/            # OpenAPI schemas
 └── docs/                 # Data model & decisions
 ```
-
-{{% notice warning %}}
-Make sure the `aws/functions/dist/` directory exists before running `cdk deploy`. If it does not exist, Lambda code will not be found and the deployment will fail.
-{{% /notice %}}

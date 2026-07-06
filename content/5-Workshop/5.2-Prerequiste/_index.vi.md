@@ -92,7 +92,3 @@ DMS/
 ├── contracts/            # OpenAPI schemas
 └── docs/                 # Data model & decisions
 ```
-
-{{% notice warning %}}
-Đảm bảo thư mục `aws/functions/dist/` đã tồn tại trước khi chạy `cdk deploy`. Nếu chưa có, CDK sẽ không tìm thấy code Lambda và quá trình triển khai sẽ thất bại.
-{{% /notice %}}

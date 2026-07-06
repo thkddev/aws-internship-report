@@ -84,10 +84,6 @@ Hoặc dùng biến môi trường:
 DMS_ALERT_EMAIL=your-email@example.com npx cdk deploy -c environment=dev
 ```
 
-{{% notice warning %}}
-Sau khi deploy xong, AWS sẽ gửi **email xác nhận đăng ký** tới địa chỉ email cảnh báo. Bạn phải nhấn **"Confirm subscription"** trong email đó để kích hoạt SNS notification.
-{{% /notice %}}
-
 #### Kiểm tra sau khi Deploy
 
 Sau khi `cdk deploy` hoàn thành, kiểm tra phần **Outputs** trong terminal. Bạn sẽ thấy:

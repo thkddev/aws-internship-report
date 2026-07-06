@@ -72,9 +72,9 @@ Việc đi sâu vào các kiến trúc framework multi-agent đặc biệt mở 
 
 #### Hình ảnh sự kiện
 
-![Hình ảnh sự kiện 1](../../images/event3-1.png)
+![Hình ảnh sự kiện 1](../../../images/event3-1.png)
 
-![Hình ảnh sự kiện 2](../../images/event3-2.png)
+![Hình ảnh sự kiện 2](../../../images/event3-2.png)
 
-![Hình ảnh sự kiện 3](../../images/event3-3.png)
+![Hình ảnh sự kiện 3](../../../images/event3-3.png)
 

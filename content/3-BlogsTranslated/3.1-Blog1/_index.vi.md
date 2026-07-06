@@ -12,7 +12,7 @@ Trong quá trình học và thực tập, mình nhận ra rằng khi xây dựng
 
 Để giải quyết vấn đề đó, AWS đề xuất cách tiếp cận tập trung hóa việc quản lý key. Giải pháp này xây dựng một lớp quản lý khóa trung tâm hoạt động bên trên AWS KMS, kết hợp cùng IAM role, alias, AWS STS và các service khác. Kiến trúc này giúp giảm chi phí, dễ quản lý, vẫn đảm bảo isolation giữa các tenant, đồng thời tận dụng tối đa khả năng mã hóa của KMS.
 
-![KMS Multi-tenant Architecture](../../images/kms-architecture.png)
+![KMS Multi-tenant Architecture](../../../images/kms-architecture.png)
 
 ## DƯỚI ĐÂY LÀ NHỮNG ĐIỂM NỔI BẬT CỦA GIẢI PHÁP:
 

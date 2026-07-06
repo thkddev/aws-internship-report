@@ -84,10 +84,6 @@ Or use the environment variable:
 DMS_ALERT_EMAIL=your-email@example.com npx cdk deploy -c environment=dev
 ```
 
-{{% notice warning %}}
-After deployment, AWS will send a **subscription confirmation email** to your alert address. You must click **"Confirm subscription"** in that email to activate SNS notifications.
-{{% /notice %}}
-
 #### Verify Deployment
 
 After `cdk deploy` completes, check the **Outputs** section in the terminal. You should see:

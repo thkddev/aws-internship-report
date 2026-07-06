@@ -94,7 +94,7 @@ Nhìn chung, sự kiện này củng cố thêm rằng những kỹ năng mình 
 
 #### Hình ảnh sự kiện
 
-![Hình ảnh sự kiện 1](../../images/event2-1.png)
+![Hình ảnh sự kiện 1](../../../images/event2-1.png)
 
-![Hình ảnh sự kiện 2](../../images/event2-2.png)
+![Hình ảnh sự kiện 2](../../../images/event2-2.png)
 
