@@ -98,7 +98,10 @@ Sau khi `cdk deploy` hoàn thành, kiểm tra phần **Outputs** trong terminal.
 
 Kiểm tra thêm trên **AWS Console**:
 1. **CloudFormation** → Stack `DmsStack-dev` → Status: `CREATE_COMPLETE`
+   ![CloudFormation](../../../images/5.3cloudformation7.png)
 2. **DynamoDB** → Bảng `dms-dev` tồn tại với 4 GSI
+   ![DynamoDB](../../../images/5.3dynamodb4gsi.png)
 3. **S3** → 3 bucket đã được tạo
 4. **Lambda** → 11 function hiển thị
 5. **Cognito** → User pool `dms-dev` có 3 nhóm
+   ![Cognito](../../../images/5.3userpoolid.png)

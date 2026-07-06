@@ -44,7 +44,9 @@ Tài nguyên `MalwareProtectionPlan` quét mọi file được tải lên Quaran
 
 Để xem kết quả quét:
 - Vào **GuardDuty → Malware Protection → Protected buckets**
+  ![GuardDuty Malware](../../../images/5.5GuardDutyMalware.png)
 - Hoặc kiểm tra tag của S3 object trực tiếp trên Console
+  ![GuardDuty Scan Tag](../../../images/5.5scan.png)
 
 #### 4. Cognito — Phân quyền theo vai trò
 
@@ -67,7 +69,11 @@ Tất cả 11 Lambda function ghi structured log vào CloudWatch Log Groups:
 Để xem log:
 1. Vào **CloudWatch → Log Groups**
 2. Tìm `/aws/lambda/DmsStack-dev-<FunctionName>`
+   ![CloudWatch Log Group](../../../images/5.5cloudwatch.png)
 3. Dùng **Insights** để query: `fields @timestamp, @message | sort @timestamp desc | limit 50`
+   ![CloudWatch Insights](../../../images/5.5cloudwatch2.png)
+
+![Audit Logs](../../../images/5.5audit.png)
 
 #### 6. SNS — Cảnh báo Chi phí & Lỗi
 

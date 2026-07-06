@@ -61,6 +61,8 @@ Expected response:
 }
 ```
 
+![curl user](../../images/5.4curluser.png)
+
 #### 4. Upload a Document (Full Flow)
 
 **Step 4a — Request a Presigned Upload URL:**
@@ -89,10 +91,13 @@ curl -X PUT \
   "<presignedUrl>"
 ```
 
+![Upload to S3](../../images/5.4anhluufilevaos3.png)
+
 **Step 4c — Verify the pipeline ran automatically:**
 1. Go to **S3 → QuarantineBucket** → verify the file appeared
 2. Go to **GuardDuty → Malware Protection** → verify the scan ran and tagged the file
 3. Go to **S3 → DocumentsBucket** → the clean file should appear here after ~30 seconds
+   ![File saved](../../images/5.4fileluu.png)
 4. Go to **DynamoDB → `dms-dev`** → check for a new `DOC#...` record
 
 #### 5. List Documents
@@ -104,6 +109,8 @@ curl -H "Authorization: Bearer <AccessToken>" \
 
 You should see the uploaded document in the response with its `documentId`, `filename`, `versionNumber`, and timestamps.
 
+![curl document](../../images/5.4curldocument.png)
+
 #### 6. Run the Frontend Locally
 
 ```bash
@@ -113,3 +120,7 @@ npm run dev
 ```
 
 Open `http://localhost:5173` in your browser. Enter the `UserPoolId`, `UserPoolClientId`, and `ApiUrl` from the CDK outputs to configure the app, then log in with your admin credentials.
+
+![Document List](../../images/5.4danhsachdoc.png)
+
+![Department Document](../../images/5.4phongbankinhdoanhfile.png)

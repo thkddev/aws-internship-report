@@ -44,7 +44,9 @@ The `MalwareProtectionPlan` resource scans every file uploaded to QuarantineBuck
 
 To view scan results:
 - Go to **GuardDuty → Malware Protection → Protected buckets**
+  ![GuardDuty Malware](../../images/5.5GuardDutyMalware.png)
 - Or check the S3 object tags directly in the Console
+  ![GuardDuty Scan Tag](../../images/5.5scan.png)
 
 #### 4. Cognito — Role-Based Access Control
 
@@ -67,7 +69,11 @@ All 11 Lambda functions write structured logs to CloudWatch Log Groups:
 To view logs:
 1. Go to **CloudWatch → Log Groups**
 2. Find `/aws/lambda/DmsStack-dev-<FunctionName>`
+   ![CloudWatch Log Group](../../images/5.5cloudwatch.png)
 3. Use **Insights** to query: `fields @timestamp, @message | sort @timestamp desc | limit 50`
+   ![CloudWatch Insights](../../images/5.5cloudwatch2.png)
+
+![Audit Logs](../../images/5.5audit.png)
 
 #### 6. SNS — Cost & Error Alerts
 

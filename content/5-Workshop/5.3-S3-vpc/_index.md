@@ -98,7 +98,10 @@ After `cdk deploy` completes, check the **Outputs** section in the terminal. You
 
 You can also verify in the **AWS Console**:
 1. **CloudFormation** → Stack `DmsStack-dev` → Status: `CREATE_COMPLETE`
+   ![CloudFormation](../../images/5.3cloudformation7.png)
 2. **DynamoDB** → Table `dms-dev` exists with 4 GSIs
+   ![DynamoDB](../../images/5.3dynamodb4gsi.png)
 3. **S3** → Three buckets created
 4. **Lambda** → 11 functions visible
 5. **Cognito** → User pool `dms-dev` with 3 groups
+   ![Cognito](../../images/5.3userpoolid.png)

@@ -61,6 +61,8 @@ Kết quả mong đợi:
 }
 ```
 
+![curl user](../../../images/5.4curluser.png)
+
 #### 4. Tải lên tài liệu (toàn bộ luồng)
 
 **Bước 4a — Yêu cầu Presigned Upload URL:**
@@ -89,10 +91,13 @@ curl -X PUT \
   "<presignedUrl>"
 ```
 
+![Upload to S3](../../../images/5.4anhluufilevaos3.png)
+
 **Bước 4c — Xác minh pipeline đã chạy tự động:**
 1. Vào **S3 → QuarantineBucket** → xác nhận file đã xuất hiện
 2. Vào **GuardDuty → Malware Protection** → xác nhận việc quét đã chạy và gắn tag cho file
 3. Vào **S3 → DocumentsBucket** → file sạch sẽ xuất hiện sau khoảng ~30 giây
+   ![File saved](../../../images/5.4fileluu.png)
 4. Vào **DynamoDB → `dms-dev`** → kiểm tra bản ghi `DOC#...` mới
 
 #### 5. Liệt kê tài liệu
@@ -104,6 +109,8 @@ curl -H "Authorization: Bearer <AccessToken>" \
 
 Bạn sẽ thấy tài liệu vừa tải lên trong kết quả với `documentId`, `filename`, `versionNumber` và timestamp.
 
+![curl document](../../../images/5.4curldocument.png)
+
 #### 6. Chạy Frontend trên máy local
 
 ```bash
@@ -113,3 +120,7 @@ npm run dev
 ```
 
 Mở `http://localhost:5173` trên trình duyệt. Nhập `UserPoolId`, `UserPoolClientId` và `ApiUrl` từ output của CDK để cấu hình app, sau đó đăng nhập bằng tài khoản admin.
+
+![Danh sách tài liệu](../../../images/5.4danhsachdoc.png)
+
+![Phòng ban kinh doanh](../../../images/5.4phongbankinhdoanhfile.png)
