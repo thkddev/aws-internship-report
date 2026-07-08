@@ -124,3 +124,27 @@ Open `http://localhost:5173` in your browser. Enter the `UserPoolId`, `UserPoolC
 ![Document List](../../images/5.4danhsachdoc.png)
 
 ![Department Document](../../images/5.4phongbankinhdoanhfile.png)
+
+#### 7. Explore Frontend Features
+
+Once logged in, you can test various features provided by the React SPA:
+
+**Download Document:**
+![Download File](../../images/dowloadfile.png)
+
+**Share Document:**
+![Share File](../../images/sharefile.png)
+![Share File Step 2](../../images/sharefile2.png)
+![Approve Share](../../images/approveshare.png)
+
+**Manage Users (System Admin only):**
+![Manage Users](../../images/quantriuser.png)
+
+**Department Management (Department Admin only):**
+![Department](../../images/phongban.png)
+
+**Audit Logs & Admin History:**
+![Admin History](../../images/lichsuquantri.png)
+
+**Analytics Dashboard:**
+![Analytics](../../images/phantich.png)

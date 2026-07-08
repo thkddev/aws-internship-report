@@ -6,6 +6,10 @@ chapter: false
 pre: " <b> 5.1. </b> "
 ---
 
+{{% notice info %}}
+**Source Code:** [Document-Management-System](https://github.com/thkddev/Document-Management-System.git)
+{{% /notice %}}
+
 #### What is the DMS Project?
 
 The **Document Management System (DMS)** is the final project of the internship program, applying everything learned about AWS Serverless into a single, cohesive, production-grade system.

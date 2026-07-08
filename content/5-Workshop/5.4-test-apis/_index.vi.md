@@ -124,3 +124,27 @@ Mở `http://localhost:5173` trên trình duyệt. Nhập `UserPoolId`, `UserPoo
 ![Danh sách tài liệu](../../../images/5.4danhsachdoc.png)
 
 ![Phòng ban kinh doanh](../../../images/5.4phongbankinhdoanhfile.png)
+
+#### 7. Khám phá các tính năng trên Frontend
+
+Sau khi đăng nhập, bạn có thể kiểm thử các tính năng của giao diện React SPA:
+
+**Tải xuống tài liệu:**
+![Tải xuống file](../../../images/dowloadfile.png)
+
+**Chia sẻ tài liệu:**
+![Chia sẻ file](../../../images/sharefile.png)
+![Chia sẻ file bước 2](../../../images/sharefile2.png)
+![Phê duyệt chia sẻ](../../../images/approveshare.png)
+
+**Quản lý người dùng (Dành cho System Admin):**
+![Quản trị user](../../../images/quantriuser.png)
+
+**Quản lý phòng ban (Dành cho Department Admin):**
+![Phòng ban](../../../images/phongban.png)
+
+**Nhật ký hoạt động & Lịch sử quản trị:**
+![Lịch sử quản trị](../../../images/lichsuquantri.png)
+
+**Dashboard Phân tích:**
+![Phân tích](../../../images/phantich.png)

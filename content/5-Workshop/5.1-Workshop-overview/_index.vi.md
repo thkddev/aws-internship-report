@@ -6,6 +6,10 @@ chapter: false
 pre: " <b> 5.1. </b> "
 ---
 
+{{% notice info %}}
+**Source Code (Mã nguồn):** [Document-Management-System](https://github.com/thkddev/Document-Management-System.git)
+{{% /notice %}}
+
 #### DMS Project là gì?
 
 **Document Management System (DMS)** là dự án cuối kỳ của chương trình thực tập, tổng hợp toàn bộ kiến thức về AWS Serverless vào một hệ thống hoàn chỉnh, chuẩn production.
