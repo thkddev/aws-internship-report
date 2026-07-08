@@ -19,34 +19,7 @@ Hệ thống giải quyết các bài toán thực tế trong doanh nghiệp:
 
 #### Sơ đồ kiến trúc hệ thống
 
-```
-[React Frontend] → [CloudFront CDN]
-        ↓
-[Cognito] ← Xác thực JWT
-        ↓
-[API Gateway + Cognito Authorizer]
-        ↓
-[Các Lambda Function]
-   ├── documents         → [DynamoDB]
-   ├── document-detail   → [DynamoDB]
-   ├── upload-intents    → [S3 QuarantineBucket (Presigned URL)]
-   ├── download-intents  → [S3 DocumentsBucket (Presigned URL)]
-   ├── document-sharing  → [DynamoDB]
-   ├── document-audit-events → [DynamoDB]
-   ├── admin-users       → [Cognito User Pool]
-   ├── analytics         → [DynamoDB]
-   └── me                → [DynamoDB / S3]
-
-[S3 QuarantineBucket]
-   → [S3 Event Notification] → [SQS UploadQueue]
-   → [GuardDuty Malware Protection] (tag: CLEAN / THREAT_FOUND)
-   → [Lambda process-upload]
-       ├── CLEAN → chuyển sang [S3 DocumentsBucket] + ghi [DynamoDB]
-       └── THREAT_FOUND → loại bỏ + ghi [DynamoDB AuditLog]
-
-[CloudWatch Logs] ← tất cả Lambda function
-[SNS Alert] ← CloudWatch Alarms (chi phí / lỗi hệ thống)
-```
+![System Architecture Diagram](../../../images/architecturalcomplex.png)
 
 #### Các dịch vụ AWS sử dụng
 
@@ -54,10 +27,10 @@ Hệ thống giải quyết các bài toán thực tế trong doanh nghiệp:
 |---|---|
 | **Amazon Cognito** | User pool, xác thực JWT, 3 nhóm người dùng (EMPLOYEE / DEPT_ADMIN / SYS_ADMIN) |
 | **API Gateway** | REST API, Cognito Authorizer, phân quyền IAM từng endpoint |
-| **AWS Lambda** | 11 handler serverless, Node.js 22, ARM64, X-Ray tracing |
+| **AWS Lambda** | 12 handler serverless, Node.js 22, ARM64, X-Ray tracing |
 | **Amazon S3** | QuarantineBucket (khu kiểm dịch upload), DocumentsBucket (lưu trữ chính thức) |
 | **Amazon DynamoDB** | Single-table design, 4 GSI, billing PAY_PER_REQUEST, bật PITR |
-| **Amazon SQS** | Hàng đợi upload (visibility timeout 6 phút) + Dead Letter Queue (giữ 14 ngày) |
+| **Amazon EventBridge** | Bus sự kiện định tuyến sự kiện S3 tới các Lambda function |
 | **GuardDuty** | Malware Protection Plan quét toàn bộ file tải vào quarantine |
 | **Amazon CloudFront** | CDN phân phối React SPA từ S3 |
 | **AWS CDK** | Triển khai hạ tầng hoàn toàn bằng TypeScript (IaC) |

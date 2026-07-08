@@ -8,6 +8,8 @@ pre: " <b> 5.3. </b> "
 
 Bước này triển khai toàn bộ hạ tầng DMS lên AWS bằng một lệnh CDK duy nhất. CDK stack sẽ tự động tạo tất cả các dịch vụ cần thiết.
 
+![Deployment Activity](../../../images/activity.png)
+
 #### Những gì sẽ được tạo ra
 
 `DmsStack` tạo ra các tài nguyên theo thứ tự sau:
@@ -20,6 +22,7 @@ Bước này triển khai toàn bộ hạ tầng DMS lên AWS bằng một lện
 - Hiệu lực token: Access/ID token = 60 phút, Refresh token = 7 ngày
 
 **2. Amazon S3 — Ba bucket private**
+![3 Buckets](../../../images/3bucket.png)
 - `FrontendBucket` — lưu trữ React SPA đã build
 - `QuarantineBucket` — nhận tất cả file upload trước; GuardDuty quét tại đây
 - `DocumentsBucket` — chỉ lưu các tài liệu sạch, đã được duyệt
@@ -33,7 +36,8 @@ Bước này triển khai toàn bộ hạ tầng DMS lên AWS bằng một lện
 - Thuộc tính TTL: `expiresAtEpoch` (tự xóa bản ghi UploadIntent hết hạn)
 - 4 Global Secondary Index (GSI1–GSI4) cho các query pattern khác nhau
 
-**4. AWS Lambda — 11 Functions (Node.js 22, ARM64)**
+**4. AWS Lambda → 12 functions visible (Node.js 22, ARM64)**
+![12 Lambda Functions](../../../images/12lambda.png)
 
 | Handler | Chức năng |
 |---|---|
@@ -46,13 +50,13 @@ Bước này triển khai toàn bộ hạ tầng DMS lên AWS bằng một lện
 | `document-sharing` | Chia sẻ/thu hồi quyền truy cập tài liệu |
 | `admin-users` | Tạo/quản lý người dùng trong Cognito |
 | `analytics` | Thống kê dung lượng và hoạt động |
-| `process-upload` | SQS consumer: chuyển file sạch, ghi DynamoDB |
-| `process-upload-dlq` | Xử lý message upload thất bại từ Dead Letter Queue |
+| `process-upload` | EventBridge target: chuyển file sạch, ghi DynamoDB |
+| `process-upload-dlq` | Xử lý sự kiện gửi thất bại từ Dead Letter Queue |
 
-**5. Amazon SQS — Upload Queue**
-- Queue chính: visibility timeout 6 phút, lưu 4 ngày
-- Dead Letter Queue: lưu 14 ngày, kích hoạt sau 10 lần nhận thất bại
-- S3 QuarantineBucket kích hoạt SQS mỗi khi có `s3:ObjectCreated:Put` dưới prefix `quarantine/`
+**5. Amazon EventBridge — Định tuyến sự kiện**
+- Bus sự kiện định tuyến sự kiện S3 `ObjectCreated` trực tiếp tới processing Lambda
+- Dead Letter Queue: xử lý các sự kiện gửi thất bại nếu Lambda xử lý lỗi
+- S3 QuarantineBucket gửi sự kiện tới EventBridge mỗi khi có `s3:ObjectCreated:Put` dưới prefix `quarantine/`
 
 **6. GuardDuty Malware Protection Plan**
 - IAM role riêng cấp quyền cho GuardDuty quét QuarantineBucket

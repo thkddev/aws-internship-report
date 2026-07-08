@@ -26,10 +26,10 @@ Are you sure you want to delete: DmsStack-dev (y/n)? y
 This command will automatically delete:
 - All 3 S3 buckets (FrontendBucket, QuarantineBucket, DocumentsBucket) and their contents
 - DynamoDB table `dms-dev` and all data
-- All 11 Lambda functions and their CloudWatch Log Groups
+- All 12 Lambda functions and their CloudWatch Log Groups
 - API Gateway REST API
 - Cognito User Pool and all users
-- SQS queues (UploadQueue and DeadLetterQueue)
+- EventBridge Rules and targets
 - CloudFront distribution
 - SNS topic and email subscriptions
 - GuardDuty Malware Protection Plan and IAM role

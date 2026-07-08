@@ -26,10 +26,10 @@ Are you sure you want to delete: DmsStack-dev (y/n)? y
 Lệnh này sẽ tự động xóa:
 - Cả 3 S3 bucket (FrontendBucket, QuarantineBucket, DocumentsBucket) và toàn bộ nội dung bên trong
 - Bảng DynamoDB `dms-dev` và toàn bộ dữ liệu
-- Tất cả 11 Lambda function và CloudWatch Log Group của chúng
+- Tất cả 12 Lambda function và CloudWatch Log Group của chúng
 - REST API trên API Gateway
 - Cognito User Pool và tất cả người dùng
-- SQS queue (UploadQueue và DeadLetterQueue)
+- Các EventBridge Rule và target
 - CloudFront distribution
 - SNS topic và các email subscription
 - GuardDuty Malware Protection Plan và IAM role

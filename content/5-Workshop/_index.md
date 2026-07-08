@@ -19,7 +19,7 @@ The system is deployed via **AWS CDK** (Infrastructure as Code) and integrates t
 - **AWS Lambda** — Serverless business logic handlers (Node.js 22, ARM64)
 - **Amazon S3** — Private document storage (DocumentsBucket) and upload quarantine (QuarantineBucket)
 - **Amazon DynamoDB** — Single-table design with GSI indexes for metadata, versioning, sharing, and audit logs
-- **Amazon SQS** — Asynchronous upload processing queue with Dead Letter Queue
+- **Amazon EventBridge** — Serverless event bus routing S3 events to Lambda
 - **Amazon GuardDuty** — Malware Protection scanning for uploaded files
 - **Amazon CloudFront** — CDN delivery for the React frontend
 - **Amazon CloudWatch** — Centralized log monitoring and cost alerting
@@ -32,16 +32,16 @@ The data flow follows this pattern:
 1. The user logs in via the React frontend using **Cognito** and receives a JWT token.
 2. All API calls go through **API Gateway**, which validates the JWT via Cognito Authorizer.
 3. File uploads use **Presigned URLs** — the frontend uploads directly to **QuarantineBucket** (S3), bypassing API Gateway.
-4. An **S3 event notification** triggers an **SQS message** when a new file lands in the quarantine bucket.
+4. **Amazon EventBridge** routes an `Object Created` event to Lambda when a new file lands in the quarantine bucket.
 5. **GuardDuty Malware Protection** scans the file and tags it with `CLEAN` or `THREAT_FOUND`.
-6. A **Lambda** worker polls the SQS queue, reads the GuardDuty scan tag, moves clean files to **DocumentsBucket**, and writes metadata + version records to **DynamoDB**.
+6. A **Lambda** worker triggered by EventBridge reads the GuardDuty scan tag, moves clean files to **DocumentsBucket**, and writes metadata + version records to **DynamoDB**.
 7. Document sharing, audit logs, analytics, and user management are all handled by dedicated **Lambda** functions.
 
 #### Workshop Content
 
 1. [Workshop Overview](5.1-Workshop-overview/)
 2. [Prerequisites](5.2-Prerequiste/)
-3. [Deploy Infrastructure with AWS CDK](5.3-S3-vpc/)
-4. [Configure Backend & Test APIs](5.4-S3-onprem/)
-5. [Security & Monitoring with GuardDuty and CloudWatch](5.5-Policy/)
+3. [Deploy Infrastructure with AWS CDK](5.3-deploy-infrastructure/)
+4. [Configure Backend & Test APIs](5.4-test-apis/)
+5. [Security & Monitoring with GuardDuty and CloudWatch](5.5-security-monitoring/)
 6. [Clean Up Resources](5.6-Cleanup/)

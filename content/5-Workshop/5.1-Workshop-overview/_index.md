@@ -19,34 +19,7 @@ The system addresses real-world enterprise pain points:
 
 #### System Architecture Diagram
 
-```
-[React Frontend] → [CloudFront CDN]
-        ↓
-[Cognito] ← JWT Authentication
-        ↓
-[API Gateway + Cognito Authorizer]
-        ↓
-[Lambda Functions]
-   ├── documents         → [DynamoDB]
-   ├── document-detail   → [DynamoDB]
-   ├── upload-intents    → [S3 QuarantineBucket (Presigned URL)]
-   ├── download-intents  → [S3 DocumentsBucket (Presigned URL)]
-   ├── document-sharing  → [DynamoDB]
-   ├── document-audit-events → [DynamoDB]
-   ├── admin-users       → [Cognito User Pool]
-   ├── analytics         → [DynamoDB]
-   └── me                → [DynamoDB / S3]
-
-[S3 QuarantineBucket]
-   → [S3 Event Notification] → [SQS UploadQueue]
-   → [GuardDuty Malware Protection] (tags: CLEAN / THREAT_FOUND)
-   → [Lambda process-upload]
-       ├── CLEAN → move to [S3 DocumentsBucket] + write [DynamoDB]
-       └── THREAT_FOUND → discard + [DynamoDB AuditLog]
-
-[CloudWatch Logs] ← all Lambda functions
-[SNS Alert] ← CloudWatch Alarms (cost / errors)
-```
+![System Architecture Diagram](../../images/architecturalcomplex.png)
 
 #### AWS Services Used
 
@@ -54,10 +27,10 @@ The system addresses real-world enterprise pain points:
 |---|---|
 | **Amazon Cognito** | User pool, JWT auth, 3 user groups (EMPLOYEE / DEPT_ADMIN / SYS_ADMIN) |
 | **API Gateway** | REST API, Cognito Authorizer, per-endpoint IAM authorization |
-| **AWS Lambda** | 11 serverless handlers, Node.js 22, ARM64, X-Ray tracing |
+| **AWS Lambda** | 12 serverless handlers, Node.js 22, ARM64, X-Ray tracing |
 | **Amazon S3** | QuarantineBucket (upload staging), DocumentsBucket (final storage) |
 | **Amazon DynamoDB** | Single-table design, 4 GSIs, PAY_PER_REQUEST billing, PITR enabled |
-| **Amazon SQS** | Upload queue (6-min visibility timeout) + Dead Letter Queue (14-day retention) |
+| **Amazon EventBridge** | Event bus routing S3 events to processing Lambda functions |
 | **GuardDuty** | Malware Protection Plan scanning all quarantine uploads |
 | **Amazon CloudFront** | CDN for React SPA frontend served from S3 |
 | **AWS CDK** | Full IaC deployment in TypeScript |
