@@ -21,6 +21,18 @@ The system addresses real-world enterprise pain points:
 - Immutable audit trail for all document operations
 - Automatic malware scanning on every uploaded file
 
+#### Test Accounts & Access
+
+**Website URL:** [https://dmt3lkrot0e6x.cloudfront.net/](https://dmt3lkrot0e6x.cloudfront.net/)
+
+| Role | Username | Password |
+|---|---|---|
+| System Admin | admin@gmail.com | Admin12345@ |
+| Employee | fin123@gmail.com | Test12345.@A |
+| Department Admin | depart123@gmail.com | Test12345.@A |
+
+*Note: This is an internal website, so the UI will not have a self-registration option. Accounts must be granted by the Admin.*
+
 #### System Architecture Diagram
 
 ![System Architecture Diagram](../../images/architecturalcomplex.png)

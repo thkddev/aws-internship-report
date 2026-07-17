@@ -21,6 +21,18 @@ Hệ thống giải quyết các bài toán thực tế trong doanh nghiệp:
 - Audit trail bất biến cho mọi thao tác với tài liệu
 - Tự động quét malware mỗi khi có file được tải lên
 
+#### Tài khoản dùng thử
+
+**Website URL:** [https://dmt3lkrot0e6x.cloudfront.net/](https://dmt3lkrot0e6x.cloudfront.net/)
+
+| Role | Username | Password |
+|---|---|---|
+| System Admin | admin@gmail.com | Admin12345@ |
+| Employee | fin123@gmail.com | Test12345.@A |
+| Department Admin | depart123@gmail.com | Test12345.@A |
+
+*Lưu ý: Đây là web nội bộ nên UI sẽ không hiện tự đăng ký mà phải được Admin cấp tài khoản cho.*
+
 #### Sơ đồ kiến trúc hệ thống
 
 ![System Architecture Diagram](../../../images/architecturalcomplex.png)
